@@ -1,0 +1,291 @@
+#!/bin/bash
+
+# FOSS Compliance Utils / compliance-tool
+#
+# SPDX-FileCopyrightText: 2021 Henrik Sandklef
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+COMPLIANCE_UTILS_VERSION=__COMPLIANCE_UTILS_VERSION__
+if [ "${COMPLIANCE_UTILS_VERSION}" = "__COMPLIANCE_UTILS_VERSION__" ]
+then
+    GIT_DIR=$(dirname ${BASH_SOURCE[0]})
+    COMPLIANCE_UTILS_VERSION=$(cd $GIT_DIR && git rev-parse --short HEAD)
+fi
+
+PROG=$(basename "$0")
+
+#
+# compliance tools docker image settings
+#
+DOCKER_IMAGE=sandklef/compliance-tools
+DOCKER_TAG=0.1
+
+DOCKER_ARGS=" ${DOCKER_IMAGE}:${DOCKER_TAG}"
+MOUNT_DIR=/compliance-tools
+DOCKER_MOUNT_ARGS="-v $(pwd):${MOUNT_DIR}"
+
+
+error()
+{
+    echo "$*" 1>&2
+}
+
+verbose()
+{
+    if [ "$DEBUG" = "true" ]
+    then
+        echo "$*" 1>&2
+    fi
+}
+
+verbosen()
+{
+    if [ "$DEBUG" = "true" ]
+    then
+        echo -n "$*" 1>&2
+    fi
+}
+
+exit_if_error()
+{
+    if [ $1 -ne 0 ]
+    then
+        error "ERROR..."
+        if [ "$2" != "" ]
+        then
+            error "$2"
+        fi
+        exit $1
+    fi
+}
+
+check_image()
+{
+    local image=$1
+    local tag=$2
+    verbosen  "Checking docker image $image ($tag): "
+    
+    PRESENT=$(docker images | grep -e "$image" | grep "${tag}" | wc -l)
+    if [ $PRESENT -gt 0 ] 
+    then
+        verbose "OK, present"
+    else
+        verbose "Fail, missing"
+        error "No docker image \"${DOCKER_IMAGE}:${DOCKER_TAG}\""
+        exit 1
+    fi
+}
+
+dload_image()
+{
+    local image=$1
+    local tag=$2
+    verbosen  "Downloading docker image $image ($tag): "
+    
+    docker pull "${image}:${tag}"
+    if [ $? -eq 0 ] 
+    then
+        verbose "OK"
+    else
+        verbose "Fail, could not pull image"
+        error "Could not pull docker image \"${DOCKER_IMAGE}:${DOCKER_TAG}\""
+        exit 1
+    fi
+}
+
+run_docker()
+{
+    local PROG=$1
+    shift 
+    local ARGS="$*"
+    verbose "docker run --rm -i -t ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS"
+    docker run --rm -i -t ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS
+}
+
+docker_versions()
+{
+    echo -n " * Compliance utils: " && run_docker flict-to-dot --version 
+    echo -n " * Flict:            " && run_docker flict --version 
+    echo -n " * License detector: unknown" && echo 
+    echo -n " * Ninka:            " && run_docker ninka | head -1 | cut -d " " -f 2
+    echo -n " * Ort:              " && run_docker ort --version | grep version | cut -d "," -f 2 | cut -d " " -f 3 | sed 's,\.,,g'
+    echo -n " * Reuse:            " && run_docker reuse --version | cut -d " " -f 2
+    echo -n " * Scancode:         " && run_docker scancode --version | cut -d " " -f 3
+}
+
+usage()
+{
+    echo "NAME"
+    echo ""
+    echo "    ${PROG} - misc license compliance tools in one docker image"
+    echo ""
+    echo
+    echo "SYNOPSIS"
+    echo 
+    echo "    ${PROG} [OPTION]"
+    echo ""
+    echo ""
+    echo "DESCRIPTION"
+    echo ""
+    echo "    ${PROG} manages a docker image with useful license compliance tools."
+    echo "    Included tools:"
+    echo "        flict"
+    echo "        license-detectork"
+    echo "        ninka"
+    echo "        ort"
+    echo "        reuse"
+    echo "        scancode"
+    echo ""
+    echo "    The current directory is mounted under ${MOUNT_DIR}. This is crucial to let the"
+    echo "    tools work on your files and directories and output result outside the"
+    echo "    docker container. ${MOUNT_DIR} is also set as the docker WORKDIR"
+    echo ""
+    echo "    When invoked under any of the following names:"
+    echo "        flict, license-detector, ninka, ort"
+    echo "        reuse, scancode"
+    echo "    the corresponding program (run inside) docker is invoked and the arguments"
+    echo "    are passed to the program."
+    echo ""
+    echo "    To ease up executing the commands you can add the directory where ${PROG} "
+    echo "    is loacted to PATH. You can typically do this by adding the following to "
+    echo "    your ~/.bashrc (assuming you're using bash):"
+    echo "         PATH=$(realpath $(dirname ${BASH_SOURCE[0]})/../wrappers):\$PATH"
+    echo ""
+    echo "OPTIONS"
+    echo ""
+    echo "    -h, --help"
+    echo "          output this help text"
+    echo ""
+    echo "    -v, --verbose"
+    echo "          enable verbose printout"
+    echo ""
+    echo "    -np, --no-parallel"
+    echo "          do not use parallel processes when scanning (with Scancode). "
+    echo "          By default all processors are used. This option is useful if "
+    echo "          you want to keep scancode in the background"
+    echo 
+    echo "    --version"
+    echo "          output version information for this tool and the"
+    echo "          built in programs"
+    echo
+    echo "    bash"
+    echo "          Starts a bash session in docker"
+    echo
+    echo "    flict [ARGS]"
+    echo "          Starts flict with the arguments [ARGS]"
+    echo
+    echo "    license-detector [ARGS]"
+    echo "          Starts license-detector with the arguments [ARGS]"
+    echo
+    echo "    ninka [ARGS]"
+    echo "          Starts ninka with the arguments [ARGS]"
+    echo
+    echo "    reuse [ARGS]"
+    echo "          Starts reuse with the arguments [ARGS]"
+    echo
+    echo "    scancode [ARGS]"
+    echo "          Starts scancode with the arguments [ARGS]"
+    echo
+    echo "    scancode-wrapper [DIR]"
+    echo "          Starts scan (Scancode) of DIR, storing result in DIR-scan.json"
+    echo
+    echo "    pull"
+    echo "          Pulls the docker image $DOCKER_IMAGE ($DOCKER_TAG)"
+    echo "          from docker.io"
+    echo
+    echo "EXAMPLES"
+    echo ""
+    echo "    Invoke Scancode to scan directory X (in the current directory)" 
+    echo "        ${PROG} scancode -clipe X --json X.json"
+    echo "    or like this (assuming you've modified the PATH variable as described above):"
+    echo "        scancode -clipe X --json X.json"
+    echo ""
+    echo "    Invoke scancode-wrapper to scan directory X" 
+    echo "        scancode-wrapper X"
+    echo "" 
+    echo "AUTHOR"
+    echo ""
+    echo "    Written by Henrik Sandklef"
+    echo
+    echo "    Please note that this is simply a wrapper around some great programs."
+    echo
+    echo "COPYRIGHT"
+    echo ""
+    echo "    Copyright (c) 2021 Henrik Sandklef"
+    echo "    License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
+    echo "    This  is  free  software: you are free to change and redistribute it.  "
+    echo "    There is NO WARRANTY, to the extent permitted by law."
+    echo
+    echo
+    echo "REPORTING BUGS"
+    echo ""
+    echo "    Create an issue at https://github.com/vinland-technology/compliance-utils"
+    echo
+    echo "SEEL ALSO"
+    echo ""
+    echo "    flict            - https://github.com/vinland-technology/flict"
+    echo "    license-detector - http://github.com/go-enry/go-license-detector"
+    echo "    ninka            - http://ninka.turingmachine.org/"
+    echo "    ort              - https://github.com/oss-review-toolkit/ort" 
+    echo "    reuse            - https://reuse.software/"
+    echo "    scancode         - https://github.com/nexB/scancode-toolkit" 
+    echo ""
+}
+
+verbose "$PROG"
+ARGS=$*
+# Measure on host, use in docker (same as host)
+PARALLEL_ARGS=" -n $(cat /proc/cpuinfo | grep processor | wc -l) "
+
+case $PROG in
+    "compliance-tool")
+        while [ "$1" != "" ]
+        do
+            case "$1" in
+                "--verbose")
+                    DEBUG=true
+                    ;;
+                "--help"|"-h")
+                    usage
+                    exit 0
+                    ;;
+                "--version")
+                    echo "Compliance utils:    $COMPLIANCE_UTILS_VERSION"
+                    docker_versions
+                    exit 0
+                    ;;
+                "--no-parallel"|"-np")
+                    PARALLEL_ARGS=" -n 1 "
+                    ;;
+                "bash"|"shell")
+                    PROG=bash
+                    ARGS=""
+                    ;;
+                "pull")
+                    docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
+                    exit 0
+                    ;;
+                *)
+                    PROG=$1
+                    shift
+                    ARGS="$*"
+            esac
+            shift
+        done
+        ;;
+    "scancode-wrapper")
+        DIR_TO_SCAN=$1
+        SC_REPORT=${DIR_TO_SCAN}-scan.json
+        PROG=scancode
+        ARGS=" -clipe ${PARALLEL_ARGS} --json ${SC_REPORT} ${DIR_TO_SCAN} "
+        ;;
+    *)
+        verbose "Ignoring $PROG since it is the program to start"
+        ;;
+esac
+
+
+run_docker $PROG $ARGS
+verbose "Running $PROG $* via docker"
