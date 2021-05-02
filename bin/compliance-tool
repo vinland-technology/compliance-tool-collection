@@ -63,11 +63,9 @@ exit_if_error()
 
 check_image()
 {
-    local image=$1
-    local tag=$2
-    verbosen  "Checking docker image $image ($tag): "
+    verbosen  "Checking docker image $DOCKER_IMAGE ($DOCKER_TAG): "
     
-    PRESENT=$(docker images | grep -e "$image" | grep "${tag}" | wc -l)
+    PRESENT=$(docker images | grep -e "$DOCKER_IMAGE" | grep "${DOCKER_TAG}" | wc -l)
     if [ $PRESENT -gt 0 ] 
     then
         verbose "OK, present"
@@ -106,13 +104,13 @@ run_docker()
 
 docker_versions()
 {
-    echo -n " * Compliance utils: " && run_docker flict-to-dot --version 
-    echo -n " * Flict:            " && run_docker flict --version 
-    echo -n " * License detector: unknown" && echo 
-    echo -n " * Ninka:            " && run_docker ninka | head -1 | cut -d " " -f 2
-    echo -n " * Ort:              " && run_docker ort --version | grep version | cut -d "," -f 2 | cut -d " " -f 3 | sed 's,\.,,g'
-    echo -n " * Reuse:            " && run_docker reuse --version | cut -d " " -f 2
-    echo -n " * Scancode:         " && run_docker scancode --version | cut -d " " -f 3
+    echo -n " * Compliance utils:          " && run_docker flict-to-dot --version 
+    echo -n " * Flict:                     " && run_docker flict --version 
+    echo -n " * License detector:          unknown" && echo 
+    echo -n " * Ninka:                     " && run_docker ninka | head -1 | cut -d " " -f 2
+    echo -n " * Ort:                       " && run_docker ort --version | grep version | cut -d "," -f 2 | cut -d " " -f 3 | sed 's,\.,,g'
+    echo -n " * Reuse:                     " && run_docker reuse --version | cut -d " " -f 2
+    echo -n " * Scancode:                  " && run_docker scancode --version | cut -d " " -f 3
 }
 
 usage()
@@ -253,7 +251,8 @@ case $PROG in
                     exit 0
                     ;;
                 "--version")
-                    echo "Compliance tools:    $COMPLIANCE_UTILS_VERSION"
+                    echo "Compliance tools collections: $COMPLIANCE_UTILS_VERSION"
+                    check_image
                     docker_versions
                     exit 0
                     ;;
@@ -287,6 +286,8 @@ case $PROG in
         ;;
 esac
 
+
+check_image
 
 run_docker $PROG $ARGS
 verbose "Running $PROG $* via docker"
