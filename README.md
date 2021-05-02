@@ -108,9 +108,11 @@ COPYRIGHT
 
 REPORTING BUGS
 
-    Create an issue at https://github.com/vinland-technology/compliance-utils
+    Create an issue at https://github.com/vinland-technology/compliance-tools-collections
 
 SEEL ALSO
+
+    misc tools       - https://github.com/vinland-technology/compliance-utils
 
     flict            - https://github.com/vinland-technology/flict
     license-detector - http://github.com/go-enry/go-license-detector
