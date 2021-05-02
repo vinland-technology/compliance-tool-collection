@@ -96,7 +96,7 @@ AUTHOR
 
     Written by Henrik Sandklef
 
-    Please note that this is simply a wrapper around some great programs.
+    Please note that this is just a simple wrapper around some great programs.
 
 COPYRIGHT
 
