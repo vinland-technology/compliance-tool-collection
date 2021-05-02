@@ -252,7 +252,7 @@ case $PROG in
                     exit 0
                     ;;
                 "--version")
-                    echo "Compliance utils:    $COMPLIANCE_UTILS_VERSION"
+                    echo "Compliance tools:    $COMPLIANCE_UTILS_VERSION"
                     docker_versions
                     exit 0
                     ;;
