@@ -221,10 +221,11 @@ usage()
     echo
     echo "REPORTING BUGS"
     echo ""
-    echo "    Create an issue at https://github.com/vinland-technology/compliance-utils"
+    echo "    Create an issue at https://github.com/vinland-technology/compliance-tools-collections"
     echo
     echo "SEEL ALSO"
     echo ""
+    echo "    misc tools       - https://github.com/vinland-technology/compliance-utils"
     echo "    flict            - https://github.com/vinland-technology/flict"
     echo "    license-detector - http://github.com/go-enry/go-license-detector"
     echo "    ninka            - http://ninka.turingmachine.org/"
