@@ -113,7 +113,6 @@ REPORTING BUGS
 SEEL ALSO
 
     misc tools       - https://github.com/vinland-technology/compliance-utils
-
     flict            - https://github.com/vinland-technology/flict
     license-detector - http://github.com/go-enry/go-license-detector
     ninka            - http://ninka.turingmachine.org/
