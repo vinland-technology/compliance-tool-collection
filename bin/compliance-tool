@@ -26,6 +26,7 @@ DOCKER_ARGS=" ${DOCKER_IMAGE}:${DOCKER_TAG}"
 MOUNT_DIR=/compliance-tools
 DOCKER_MOUNT_ARGS="-v $(pwd):${MOUNT_DIR}"
 
+DEBUG=false
 
 error()
 {
@@ -165,6 +166,9 @@ usage()
     echo "          you want to keep scancode in the background"
     echo 
     echo "    --version"
+    echo "          output version information for this tool"
+    echo
+    echo "    --versions"
     echo "          output version information for this tool and the"
     echo "          built in programs"
     echo
@@ -233,17 +237,32 @@ usage()
     echo ""
 }
 
+setup_scancode_wrapper()
+{
+    DIR_TO_SCAN="$1"
+    SC_REPORT=${DIR_TO_SCAN}-scan.json
+    export PROG=scancode
+    export ARGS=" -clipe ${PARALLEL_ARGS} --json ${SC_REPORT} ${DIR_TO_SCAN} "
+
+    verbose "Preparing PROG and ARGS for scancode"
+    verbose " * PROG: $PROG"
+    verbose " * ARGS: $ARGS"
+}
+
 verbose "$PROG"
 ARGS=$*
 # Measure on host, use in docker (same as host)
 PARALLEL_ARGS=" -n $(cat /proc/cpuinfo | grep processor | wc -l) "
 
+verbose "check $PROG"
 case $PROG in
     "compliance-tool")
+        verbose "check $PROG - compliance-tool found"
         while [ "$1" != "" ]
         do
+            verbose "check $PROG - compliance-tool found - parse $1"
             case "$1" in
-                "--verbose")
+                "--verbose"|"-d")
                     DEBUG=true
                     ;;
                 "--help"|"-h")
@@ -251,6 +270,10 @@ case $PROG in
                     exit 0
                     ;;
                 "--version")
+                    echo "Compliance tools collections: $COMPLIANCE_UTILS_VERSION"
+                    exit 0
+                    ;;
+                "--versions")
                     echo "Compliance tools collections: $COMPLIANCE_UTILS_VERSION"
                     check_image
                     docker_versions
@@ -267,6 +290,10 @@ case $PROG in
                     docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
                     exit 0
                     ;;
+                "scancode-wrapper")
+                    setup_scancode_wrapper "$2"
+                    break
+                    ;;
                 *)
                     PROG=$1
                     shift
@@ -276,10 +303,7 @@ case $PROG in
         done
         ;;
     "scancode-wrapper")
-        DIR_TO_SCAN=$1
-        SC_REPORT=${DIR_TO_SCAN}-scan.json
-        PROG=scancode
-        ARGS=" -clipe ${PARALLEL_ARGS} --json ${SC_REPORT} ${DIR_TO_SCAN} "
+        setup_scancode_wrapper "$1"
         ;;
     *)
         verbose "Ignoring $PROG since it is the program to start"
