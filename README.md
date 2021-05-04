@@ -1,123 +1,196 @@
-# compliance-tools-collections
-misc license compliance tools in one docker image
+# Compliance Tools Collections
 
-# Manual
+*Misc license compliance tools in one docker image*
+
+## Background
+
+In my work wih license compliance one often need some basic, yet
+powerful, tools. Sometimes you are allowed to install the tools you
+need and sometimes you're not. So we decided to create a docker image
+that has the tool we use on a daily basis and to create a little
+script to manage the image.
+
+## Programs on the image
+
+* [misc tools](https://github.com/vinland-technology/compliance-utils)
+* [flict](https://github.com/vinland-technology/flict)
+* [license-detector](http://github.com/go-enry/go-license-detector)
+* [ninka](http://ninka.turingmachine.org/)
+* [ort](https://github.com/oss-review-toolkit/ort)
+* [reuse](https://reuse.software/)
+* [scancode](https://github.com/nexB/scancode-toolkit)
+
+# Installing
+
+## Clone the repo
+
+You simply clone this directory in a folder of your choice. For the
+sake of this manual we're using ```~/opt/vinland```.
 
 ```
-NAME
+cd ~/opt/vinland
+git clone https://github.com/vinland-technology/compliance-tools-collections.git
+```
 
-    compliance-tool - misc license compliance tools in one docker image
+## Tweak your PATH variable
 
+Add this repo's bin directory to your PATH variable. Assuming you're using bash:
 
-SYNOPSIS
+```
+echo "PATH=~/opt/vinland/compliance-tools-collections/bin/:\$PATH" >> ~/.bashrc
+```
 
-    compliance-tool [OPTION]
+## Check the progress
 
+Check your installation (so far) by making sure you can get the version:
 
-DESCRIPTION
+```
+compliance-tool --version
+```
 
-    compliance-tool manages a docker image with useful license compliance tools.
-    Included tools:
-        flict
-        license-detectork
-        ninka
-        ort
-        reuse
-        scancode
+## Download the docker image
 
-    The current directory is mounted under /compliance-tools. This is crucial to let the
-    tools work on your files and directories and output result outside the
-    docker container. /compliance-tools is also set as the docker WORKDIR
+Download the docker image from the docker hub.
 
-    When invoked under any of the following names:
-        flict, license-detector, ninka, ort
-        reuse, scancode
-    the corresponding program (run inside) docker is invoked and the arguments
-    are passed to the program.
+```
+compliance-tool pull
+```
 
-    To ease up executing the commands you can add the directory where compliance-tool 
-    is loacted to PATH. You can typically do this by adding the following to 
-    your ~/.bashrc (assuming you're using bash):
-         PATH=/media/hesa/53abd732-5131-495d-9ac5-c49a4ded3efa1/hesa/opt/vinland/compliance-tools-collections/wrappers:$PATH
+## Check the progress
 
-OPTIONS
+Check your installation by making sure you can get the versions from
+the software in the docker image by issuing:
 
-    -h, --help
-          output this help text
+```
+compliance-tool --versions
+```
 
-    -v, --verbose
-          enable verbose printout
+When we executed the above, it looked like this:
 
-    -np, --no-parallel
-          do not use parallel processes when scanning (with Scancode). 
-          By default all processors are used. This option is useful if 
-          you want to keep scancode in the background
+```
+$ compliance-tool --versions
+Compliance tools collections: eb78c50
+ * Compliance utils:          ef25ff0
+ * Flict:                     c7acb64
+ * License detector:          unknown
+ * Ninka:                     v1.3.2
+ * Ort:                       79a687c
+ * Reuse:                     0.12.1
+ * Scancode:                  21.3.31
+```
 
-    --version
-          output version information for this tool and the
-          built in programs
+## Getting some help
 
-    bash
-          Starts a bash session in docker
+```
+$ compliance-tool --help
+```
 
-    flict [ARGS]
-          Starts flict with the arguments [ARGS]
+# Starting the programs in the docker image
 
-    license-detector [ARGS]
-          Starts license-detector with the arguments [ARGS]
+You can start the program (in the docker image) directly from the
+command line. Let's say you wnat to get the version for flict:
 
-    ninka [ARGS]
-          Starts ninka with the arguments [ARGS]
+```
+docker run --rm -i -t -v /home/hesa/opt/vinland/compliance-tools-collections:/compliance-tools sandklef/compliance-tools:0.1 flict --version
+```
 
-    reuse [ARGS]
-          Starts reuse with the arguments [ARGS]
+A bit too much to get it right? Use the script ```compliance-tool``` instead:
 
-    scancode [ARGS]
-          Starts scancode with the arguments [ARGS]
+```
+$ compliance-tool flict --version
+```
 
-    scancode-wrapper [DIR]
-          Starts scan (Scancode) of DIR, storing result in DIR-scan.json
+Easier, but still a bit too much. If you read the manual you can add
+the ```wrappers``` directory to your PATH. With this "trick" you can
+invoke the programs in the docker image by using the program name
+directly. So for the author of this manual the help text
+(```compliance-tool --help```) said I should add the following to my
+.bashrc or simply issue it every time you want to use the direct
+names:
 
-    pull
-          Pulls the docker image sandklef/compliance-tools (0.1)
-          from docker.io
+```
+         PATH=/home/hesa/opt/vinland/compliance-tools-collections/wrappers:$PATH
+```
 
-EXAMPLES
+Now you should be able to get the version from flict by simply typing:
 
-    Invoke Scancode to scan directory X (in the current directory)
-        compliance-tool scancode -clipe X --json X.json
-    or like this (assuming you've modified the PATH variable as described above):
-        scancode -clipe X --json X.json
+```
+$ flict --version
+c7acb64
+```
 
-    Invoke scancode-wrapper to scan directory X
-        scancode-wrapper X
+# Sharing the files with the docker image
 
-AUTHOR
+Just running the programs and not being able to have them read and
+write to your file system would be pretty useless, unless you're
+satisfied with gett the version from a program.
 
-    Written by Henrik Sandklef
+When running the docker image (container) we're mounting the current
+directory to the ```/compliance-tools``` inside docker. We've set the
+```WORKDIR``` variable to the same directory so if you for example
+want to run scancode on a directory called ```src``` you can issue the
+following command:
 
-    Please note that this is just a simple wrapper around some great programs.
+```
+scancode -clipe src --json src-scan.json"
+```
 
-COPYRIGHT
+This will scan your local directory ```src``` and store the resulting
+scan (in JSON format) in a file ```src-scan.json``` in the current
+directory.
 
+# Extra utils
+
+## Scancode wrapper
+
+If you want to scan a directory (in the current directory) you can write:
+
+```
+scancode -clipe src --json src-scan.json"
+```
+
+Since we scan code with Scancode a lot we have a small wrapper
+(```scancode-wrapper```) the does the same thing, but with the
+following syntax (assuming you've added the ```wrappers``` dir to your
+PATH):
+
+```
+scancode-wrapper src
+```
+
+This make it easy to scan multiple directories in the current
+directory. Let's sat you want to separately scan all sub directories
+in the current directory, then you can simply do this:
+
+```
+for i in $(ls); do scancode-wrapper src $i; done
+```
+
+Issue the above and you can go and have a bit for lunch and come back later.
+
+# Reporting bugs
+
+Create an issue at https://github.com/vinland-technology/compliance-tools-collections
+
+# Author and Copyright
+
+Written by [Henrik Sandklef, hesa](https://github.com/hesa)
+
+Theese tools (not the ones in the docker image) are licensed under GPL-3.0-or-later:
+
+```
     Copyright (c) 2021 Henrik Sandklef
     License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
     This  is  free  software: you are free to change and redistribute it.  
     There is NO WARRANTY, to the extent permitted by law.
-
-
-REPORTING BUGS
-
-    Create an issue at https://github.com/vinland-technology/compliance-tools-collections
-
-SEEL ALSO
-
-    misc tools       - https://github.com/vinland-technology/compliance-utils
-    flict            - https://github.com/vinland-technology/flict
-    license-detector - http://github.com/go-enry/go-license-detector
-    ninka            - http://ninka.turingmachine.org/
-    ort              - https://github.com/oss-review-toolkit/ort
-    reuse            - https://reuse.software/
-    scancode         - https://github.com/nexB/scancode-toolkit
-
 ```
+
+# Manual - Compliance tool 
+
+Manual (txt) here: [compliance-tools.txt](doc/compliance-tools.txt)
+
+# Building the image
+
+For developers only. More info here: [README](build/docker/compliance-tools/README.md)
+
+
