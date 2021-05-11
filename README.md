@@ -4,21 +4,23 @@
 
 ## Background
 
-In my work wih license compliance one often need some basic, yet
-powerful, tools. Sometimes you are allowed to install the tools you
-need and sometimes you're not. So we decided to create a docker image
-that has the tool we use on a daily basis and to create a little
+In our work wih license compliance we often need some basic
+tools. Sometimes you are allowed to install the tools you need and
+sometimes you're not. So we decided to create a docker image that
+contains the tools we use on a daily basis and to create a little
 script to manage the image.
 
 ## Programs on the image
 
-* [misc tools](https://github.com/vinland-technology/compliance-utils)
+* [compliance-utils](https://github.com/vinland-technology/compliance-utils) (misc tools)
 * [flict](https://github.com/vinland-technology/flict)
 * [license-detector](http://github.com/go-enry/go-license-detector)
 * [ninka](http://ninka.turingmachine.org/)
 * [ort](https://github.com/oss-review-toolkit/ort)
 * [reuse](https://reuse.software/)
 * [scancode](https://github.com/nexB/scancode-toolkit)
+
+Do you want more tools in the image? Create an [issue](https://github.com/vinland-technology/compliance-tools-collections/issues) at [compliance-tools-collections](https://github.com/vinland-technology/compliance-tools-collections)
 
 # Installing
 
@@ -91,7 +93,7 @@ You can start the program (in the docker image) directly from the
 command line. Let's say you wnat to get the version for flict:
 
 ```
-docker run --rm -i -t -v /home/hesa/opt/vinland/compliance-tools-collections:/compliance-tools sandklef/compliance-tools:0.1 flict --version
+docker run --rm -i -t -v $(pwd):/compliance-tools sandklef/compliance-tools:0.1 flict --version
 ```
 
 A bit too much to get it right? Use the script ```compliance-tool``` instead:
@@ -123,7 +125,7 @@ c7acb64
 
 Just running the programs and not being able to have them read and
 write to your file system would be pretty useless, unless you're
-satisfied with gett the version from a program.
+satisfied with getting the version from a program.
 
 When running the docker image (container) we're mounting the current
 directory to the ```/compliance-tools``` inside docker. We've set the
