@@ -1,4 +1,4 @@
-# Compliance Tools Collections
+# Compliance Tool Collection
 
 *Misc license compliance tools in one docker image*
 
@@ -10,6 +10,8 @@ sometimes you're not. So we decided to create a docker image that
 contains the tools we use on a daily basis and to create a little
 script to manage the image.
 
+We call the project [Compliance Tool collection](https://github.com/vinland-technology/compliance-tool-collection)
+
 ## Programs on the image
 
 * [compliance-utils](https://github.com/vinland-technology/compliance-utils) (misc tools)
@@ -20,7 +22,7 @@ script to manage the image.
 * [reuse](https://reuse.software/)
 * [scancode](https://github.com/nexB/scancode-toolkit)
 
-Do you want more tools in the image? Create an [issue](https://github.com/vinland-technology/compliance-tools-collections/issues) at [compliance-tools-collections](https://github.com/vinland-technology/compliance-tools-collections)
+Do you want more tools in the image? Create an [issue](https://github.com/vinland-technology/compliance-tool-collection/issues) at [compliance-tool-collection](https://github.com/vinland-technology/compliance-tool-collection)
 
 # Installing
 
@@ -31,7 +33,7 @@ sake of this manual we're using ```~/opt/vinland```.
 
 ```
 cd ~/opt/vinland
-git clone https://github.com/vinland-technology/compliance-tools-collections.git
+git clone https://github.com/vinland-technology/compliance-tool-collection.git
 ```
 
 ## Tweak your PATH variable
@@ -39,7 +41,7 @@ git clone https://github.com/vinland-technology/compliance-tools-collections.git
 Add this repo's bin directory to your PATH variable. Assuming you're using bash:
 
 ```
-echo "PATH=~/opt/vinland/compliance-tools-collections/bin/:\$PATH" >> ~/.bashrc
+echo "PATH=~/opt/vinland/compliance-tool-collection/bin/:\$PATH" >> ~/.bashrc
 ```
 
 ## Check the progress
@@ -111,7 +113,7 @@ directly. So for the author of this manual the help text
 names:
 
 ```
-         PATH=/home/hesa/opt/vinland/compliance-tools-collections/wrappers:$PATH
+         PATH=/home/hesa/opt/vinland/compliance-tool-collection/wrappers:$PATH
 ```
 
 Now you should be able to get the version from flict by simply typing:
@@ -172,7 +174,7 @@ Issue the above and you can go and have a bit for lunch and come back later.
 
 # Reporting bugs
 
-Create an issue at https://github.com/vinland-technology/compliance-tools-collections
+Create an issue at https://github.com/vinland-technology/compliance-tool-collection
 
 # Author and Copyright
 
