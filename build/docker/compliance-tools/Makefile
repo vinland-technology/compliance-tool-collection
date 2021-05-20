@@ -47,3 +47,6 @@ docker-show:
 	@docker container ls -a
 	@echo 
 	@docker container ps -a
+
+meta:
+	grep "^[a-z]*:" Makefile 
