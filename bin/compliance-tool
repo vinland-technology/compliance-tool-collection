@@ -20,7 +20,7 @@ PROG=$(basename "$0")
 # compliance tools docker image settings
 #
 DOCKER_IMAGE=sandklef/compliance-tools
-DOCKER_TAG=0.1
+DOCKER_TAG=0.2
 
 DOCKER_ARGS=" ${DOCKER_IMAGE}:${DOCKER_TAG}"
 MOUNT_DIR=/compliance-tools
@@ -105,11 +105,12 @@ run_docker()
 
 docker_versions()
 {
+    echo -n " * Aboutcode:                 " && run_docker about --version | grep "AboutCode-toolkit version" | cut -d " " -f 3
     echo -n " * Compliance utils:          " && run_docker flict-to-dot --version 
     echo -n " * Flict:                     " && run_docker flict --version 
     echo -n " * License detector:          unknown" && echo 
     echo -n " * Ninka:                     " && run_docker ninka | head -1 | cut -d " " -f 2
-    echo -n " * Ort:                       " && run_docker ort --version | grep version | cut -d "," -f 2 | cut -d " " -f 3 | sed 's,\.,,g'
+#    echo -n " * Ort:                       " && run_docker ort --version | grep version | cut -d "," -f 2 | cut -d " " -f 3 | sed 's,\.,,g'
     echo -n " * Reuse:                     " && run_docker reuse --version | cut -d " " -f 2
     echo -n " * Scancode:                  " && run_docker scancode --version | cut -d " " -f 3
 }
@@ -133,7 +134,7 @@ usage()
     echo "        flict"
     echo "        license-detectork"
     echo "        ninka"
-    echo "        ort"
+#    echo "        ort"
     echo "        reuse"
     echo "        scancode"
     echo ""
@@ -142,8 +143,9 @@ usage()
     echo "    docker container. ${MOUNT_DIR} is also set as the docker WORKDIR"
     echo ""
     echo "    When invoked under any of the following names:"
-    echo "        flict, license-detector, ninka, ort"
-    echo "        reuse, scancode"
+#    echo "        flict, license-detector, ninka, ort"
+    echo "        flict, license-detector, ninka"
+    echo "        reuse, scancode, scancode-manifestor"
     echo "    the corresponding program (run inside) docker is invoked and the arguments"
     echo "    are passed to the program."
     echo ""
@@ -231,7 +233,7 @@ usage()
     echo "    flict            - https://github.com/vinland-technology/flict"
     echo "    license-detector - http://github.com/go-enry/go-license-detector"
     echo "    ninka            - http://ninka.turingmachine.org/"
-    echo "    ort              - https://github.com/oss-review-toolkit/ort" 
+#    echo "    ort              - https://github.com/oss-review-toolkit/ort" 
     echo "    reuse            - https://reuse.software/"
     echo "    scancode         - https://github.com/nexB/scancode-toolkit" 
     echo ""
@@ -242,7 +244,7 @@ setup_scancode_wrapper()
     DIR_TO_SCAN="$1"
     SC_REPORT=${DIR_TO_SCAN}-scan.json
     export PROG=scancode
-    export ARGS=" -clipe --license-text --license-text-diagnostics ${PARALLEL_ARGS} --json ${SC_REPORT} ${DIR_TO_SCAN} "
+    export ARGS=" -clipe --license-text --license-text-diagnostics --classify --license-clarity-score --summary --summary-key-files --summary-with-details ${PARALLEL_ARGS} --json ${SC_REPORT} ${DIR_TO_SCAN} "
 
     verbose "Preparing PROG and ARGS for scancode"
     verbose " * PROG: $PROG"
