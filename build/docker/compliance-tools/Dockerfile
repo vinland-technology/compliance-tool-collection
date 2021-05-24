@@ -18,7 +18,7 @@ ENV MOUNT_DIR=compliance-tools
 # update main system
 #
 #######################################################
-RUN apt-get update && apt-get install -y bzip2 xz-utils zlib1g libxml2-dev libxslt1-dev p7zip-full
+RUN apt-get update && apt-get install -y bzip2 xz-utils zlib1g libxml2-dev libxslt1-dev p7zip-full jq
 
 
 
