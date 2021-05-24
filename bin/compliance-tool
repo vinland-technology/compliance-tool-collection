@@ -100,7 +100,7 @@ run_docker()
     shift 
     local ARGS="$*"
     verbose "docker run --rm -i -t ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS"
-    docker run --rm -i -t ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS
+    echo docker run --rm -i -t ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS
 }
 
 docker_versions()
@@ -296,10 +296,18 @@ case $PROG in
                     setup_scancode_wrapper "$2"
                     break
                     ;;
+                "--")
+                    shift
+                    PROG=$1
+                    shift
+                    ARGS="$*"
+                    break
+                    ;;
                 *)
                     PROG=$1
                     shift
                     ARGS="$*"
+                    break
             esac
             shift
         done
