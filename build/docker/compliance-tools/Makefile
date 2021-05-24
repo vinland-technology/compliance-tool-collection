@@ -8,7 +8,7 @@ CONTAINER_NAME=compliance-tools
 IMAGE_NAME=sandklef/${CONTAINER_NAME}
 
 MOUNT_DIR=/compliance-tools
-TAG=0.1
+TAG=0.2
 
 check:
 	@echo "IMAGE_NAME:     $(IMAGE_NAME)"
@@ -19,7 +19,7 @@ run:
 	docker run -it --rm -name $(CONTAINER_NAME) $(IMAGE_NAME):$(TAG) uname -a
 
 version:
-	@echo -n "ORT version:      " && docker run -it --rm  --name $(CONTAINER_NAME) $(IMAGE_NAME):$(TAG) ort --version | grep  "version" | cut -d "," -f 2 | cut -d " " -f 3 | cut -d "." -f 1
+#	@echo -n "ORT version:      " && docker run -it --rm  --name $(CONTAINER_NAME) $(IMAGE_NAME):$(TAG) ort --version | grep  "version" | cut -d "," -f 2 | cut -d " " -f 3 | cut -d "." -f 1
 	@echo -n "Scancode version: " && docker run -it --rm  --name $(CONTAINER_NAME) $(IMAGE_NAME):$(TAG) scancode --version | cut -d " " -f 3 
 	@echo -n "flict version:    " && docker run -it --rm  --name $(CONTAINER_NAME) $(IMAGE_NAME):$(TAG) flict --version
 
@@ -49,4 +49,4 @@ docker-show:
 	@docker container ps -a
 
 meta:
-	grep "^[a-z]*:" Makefile 
+	grep "^[a-z\-]*:" Makefile 

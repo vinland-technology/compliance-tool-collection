@@ -30,6 +30,7 @@ RUN apt-get update && apt-get install -y bzip2 xz-utils zlib1g libxml2-dev libxs
 #######################################################
 RUN pip3 install license-expression spdx-license-list spdx-lookup
 RUN git clone https://github.com/vinland-technology/flict.git
+#RUN cd flict && pip3 install flict
 
 
 
@@ -69,6 +70,13 @@ RUN pip3 install reuse
 RUN git clone https://github.com/vinland-technology/compliance-utils.git
 
 
+#######################################################
+#
+# Scancode Manifestor
+#
+#######################################################
+RUN git clone https://github.com/vinland-technology/scancode-manifestor.git
+
 
 
 
@@ -95,6 +103,24 @@ RUN \
 RUN cd scancode-toolkit-${SCANCODE_VERSION} && ./configure
 
 
+#######################################################
+#
+# Aboutcode (hesa's fork)
+#
+#######################################################
+# TODO: get from nexb
+RUN git clone https://github.com/hesa/aboutcode-toolkit.git
+RUN cd aboutcode-toolkit && git pull --all && git checkout hesa_devel
+RUN cd aboutcode-toolkit && ./configure
+
+#######################################################
+#
+# Scancode
+#
+#######################################################
+RUN git clone https://github.com/nexB/deltacode.git
+RUN cd deltacode && ./configure
+
 
 
 #######################################################
@@ -102,12 +128,13 @@ RUN cd scancode-toolkit-${SCANCODE_VERSION} && ./configure
 # ORT / Open Source Review Toolkit
 #
 #######################################################
-RUN apt-get install -y openjdk-11-jdk
-RUN git clone https://github.com/oss-review-toolkit/ort.git
-RUN cd ort && ./gradlew installDist
+#RUN apt-get install -y openjdk-11-jdk-headless
+#RUN git clone https://github.com/oss-review-toolkit/ort.git
+#RUN cd ort && ./gradlew installDist
 
 RUN mkdir ${MOUNT_DIR}
 WORKDIR   ${MOUNT_DIR}
 
-ENV PATH=$HOME/scancode-toolkit-${SCANCODE_VERSION}:$HOME/compliance-utils/bin:$HOME/flict:$HOME/ort/cli/build/install/ort/bin/:/:$PATH
+#ENV PATH=$HOME/scancode-toolkit-${SCANCODE_VERSION}:$HOME/compliance-utils/bin:$HOME/flict:$HOME/ort/cli/build/install/ort/bin/:/:$PATH
+ENV PATH=$HOME/scancode-toolkit-${SCANCODE_VERSION}:$HOME/aboutcode-toolkit:$HOME/deltacode:$HOME/compliance-utils/bin:$HOME/scancode-manifestor:/usr/local/bin:/:$PATH
 
