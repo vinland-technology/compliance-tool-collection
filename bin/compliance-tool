@@ -163,6 +163,10 @@ usage()
     echo "    -v, --verbose"
     echo "          enable verbose printout"
     echo ""
+    echo "    -s, --setup"
+    echo "          start new shell with PATH setup for accessing our tools via"
+    echo "          their name directly"
+    echo ""
     echo "    -np, --no-parallel"
     echo "          do not use parallel processes when scanning (with Scancode). "
     echo "          By default all processors are used. This option is useful if "
@@ -270,6 +274,12 @@ case $PROG in
                     ;;
                 "--help"|"-h")
                     usage
+                    exit 0
+                    ;;
+                "--setup"|"-s")
+                    DEBUG=true verbose "Setting up environment for compliance-tool in a new shell."
+                    export PATH=$(realpath $(dirname ${BASH_SOURCE[0]})/../wrappers):$PATH
+                    bash
                     exit 0
                     ;;
                 "--version")
