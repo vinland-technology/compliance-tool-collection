@@ -145,5 +145,5 @@ RUN mkdir ${MOUNT_DIR}
 WORKDIR   ${MOUNT_DIR}
 
 #ENV PATH=$HOME/scancode-toolkit-${SCANCODE_VERSION}:$HOME/compliance-utils/bin:$HOME/flict:$HOME/ort/cli/build/install/ort/bin/:/:$PATH
-ENV PATH=$HOME/scancode-toolkit-${SCANCODE_VERSION}:$HOME/aboutcode-toolkit:$HOME/deltacode:$HOME/compliance-utils/bin:$HOME/scancode-manifestor:/usr/local/bin:/:$PATH
+ENV PATH=$HOME/scancode-toolkit-${SCANCODE_VERSION}:$HOME/aboutcode-toolkit:$HOME/deltacode:$HOME/compliance-utils/bin:$HOME/scancode-manifestor:/usr/local/bin:/:/compliance-scripts/copyright-statements:$PATH
 
