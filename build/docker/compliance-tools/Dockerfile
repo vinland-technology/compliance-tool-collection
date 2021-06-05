@@ -115,11 +115,20 @@ RUN cd aboutcode-toolkit && ./configure
 
 #######################################################
 #
-# Scancode
+# Deltacode
 #
 #######################################################
 RUN git clone https://github.com/nexB/deltacode.git
 RUN cd deltacode && ./configure
+
+
+#######################################################
+#
+# Armijn's compliance-scripts
+#
+#######################################################
+RUN git clone https://github.com/armijnhemel/compliance-scripts.git
+RUN cd compliance-scripts && git submodule init && git submodule update && chmod a+x copyright-statements/createnotices.py
 
 
 
