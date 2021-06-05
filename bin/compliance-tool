@@ -107,6 +107,7 @@ docker_versions()
 {
     echo -n " * Aboutcode:                 " && run_docker about --version | grep "AboutCode-toolkit version" | cut -d " " -f 3
     echo -n " * Compliance utils:          " && run_docker flict-to-dot --version 
+    echo -n " * createnotices.py:          unknown"
     echo -n " * Deltacode:                 " && run_docker deltacode --version | grep "DeltaCode version" | cut -d " " -f 3
     echo -n " * Flict:                     " && run_docker flict --version 
     echo -n " * License detector:          unknown" && echo 
