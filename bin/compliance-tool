@@ -246,10 +246,23 @@ usage()
 
 setup_scancode_wrapper()
 {
+    len=$#
+    EXTRA_ARGS=""
+    for i in $(seq 1 $len)
+    do
+        echo "i: $i / $len"
+        if [ $i -eq $len ]
+        then
+            DIR_TO_SCAN="$1"
+        else
+            EXTRA_ARGS=" $EXTRA_ARGS $1 "
+        fi
+        shift
+    done
     DIR_TO_SCAN="$1"
     SC_REPORT=${DIR_TO_SCAN}-scan.json
     export PROG=scancode
-    export ARGS=" -clipe --license-text --license-text-diagnostics --classify --license-clarity-score --summary --summary-key-files --summary-with-details ${PARALLEL_ARGS} --json ${SC_REPORT} ${DIR_TO_SCAN} "
+    export ARGS=" -clipe --license-text --license-text-diagnostics --classify --license-clarity-score --summary --summary-key-files --summary-with-details ${PARALLEL_ARGS} ${EXTRA_ARGS} --json ${SC_REPORT} ${DIR_TO_SCAN} "
 
     verbose "Preparing PROG and ARGS for scancode"
     verbose " * PROG: $PROG"
@@ -304,7 +317,8 @@ case $PROG in
                     exit 0
                     ;;
                 "scancode-wrapper")
-                    setup_scancode_wrapper "$2"
+                    shift
+                    setup_scancode_wrapper $*
                     break
                     ;;
                 "--")
