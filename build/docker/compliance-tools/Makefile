@@ -8,7 +8,7 @@ CONTAINER_NAME=compliance-tools
 IMAGE_NAME=sandklef/${CONTAINER_NAME}
 
 MOUNT_DIR=/compliance-tools
-TAG=0.2
+TAG=0.3
 
 check:
 	@echo "IMAGE_NAME:     $(IMAGE_NAME)"
@@ -50,3 +50,12 @@ docker-show:
 
 meta:
 	grep "^[a-z\-]*:" Makefile 
+
+size:
+	@echo "Containers "
+	@echo "===================================="
+	docker ps -as
+	@echo "Images"
+	@echo "===================================="
+	docker images
+
