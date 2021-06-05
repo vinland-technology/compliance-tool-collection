@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install -y bzip2 xz-utils zlib1g libxml2-dev libxs
 #######################################################
 RUN pip3 install license-expression spdx-license-list spdx-lookup
 RUN git clone https://github.com/vinland-technology/flict.git
-#RUN cd flict && pip3 install flict
+RUN cd flict && python3 setup.py install
 
 
 
