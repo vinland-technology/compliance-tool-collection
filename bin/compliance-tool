@@ -235,13 +235,14 @@ usage()
     echo
     echo "SEEL ALSO"
     echo ""
-    echo "    misc tools       - https://github.com/vinland-technology/compliance-utils"
-    echo "    flict            - https://github.com/vinland-technology/flict"
-    echo "    license-detector - http://github.com/go-enry/go-license-detector"
-    echo "    ninka            - http://ninka.turingmachine.org/"
+    echo "    misc tools         - https://github.com/vinland-technology/compliance-utils"
+    echo "    compliance-scripts - https://github.com/armijnhemel/compliance-scripts/tree/master/copyright-statements"
+    echo "    flict              - https://github.com/vinland-technology/flict"
+    echo "    license-detector   - http://github.com/go-enry/go-license-detector"
+    echo "    ninka              - http://ninka.turingmachine.org/"
 #    echo "    ort              - https://github.com/oss-review-toolkit/ort" 
-    echo "    reuse            - https://reuse.software/"
-    echo "    scancode         - https://github.com/nexB/scancode-toolkit" 
+    echo "    reuse              - https://reuse.software/"
+    echo "    scancode           - https://github.com/nexB/scancode-toolkit" 
     echo ""
 }
 
