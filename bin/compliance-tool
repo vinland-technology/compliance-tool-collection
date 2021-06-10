@@ -266,7 +266,7 @@ setup_scancode_wrapper()
     #DIR_TO_SCAN="$1"
     SC_REPORT=${DIR_TO_SCAN}-scan.json
     export PROG=scancode
-    export ARGS=" -clipe --license-text --license-text-diagnostics --classify --license-clarity-score --summary --summary-key-files --summary-with-details ${PARALLEL_ARGS} ${EXTRA_ARGS} --json ${SC_REPORT} ${DIR_TO_SCAN} "
+    export ARGS=" -clipe --license-text --license-text-diagnostics --classify --license-clarity-score --summary --summary-key-files --summary-with-details ${PARALLEL_ARGS} ${EXTRA_ARGS} --json-pp ${SC_REPORT} ${DIR_TO_SCAN} "
 
     verbose "Preparing PROG and ARGS for scancode"
     verbose " * PROG: $PROG"
