@@ -24,9 +24,14 @@ DOCKER_TAG=0.3
 
 DOCKER_ARGS=" ${DOCKER_IMAGE}:${DOCKER_TAG}"
 MOUNT_DIR=/compliance-tools
-DOCKER_MOUNT_ARGS="-v $(pwd):${MOUNT_DIR}"
+MOUNT_TMP_DIR=/tmp/compliance-tools
+DOCKER_MOUNT_ARGS="-v $(pwd):${MOUNT_DIR} -v ${MOUNT_TMP_DIR}:${MOUNT_TMP_DIR}"
 
 DEBUG=false
+
+
+declare -A PROGRAM_ARGUMENTS
+PROGRAM_ARGUMENTS["lookup-license"]=" --tmp-dir /tmp/conpliance-tool "
 
 error()
 {
@@ -98,8 +103,10 @@ run_docker()
 {
     local PROG=$1
     shift 
-    local ARGS="$*"
+    local ARGS="$* ${PROGRAM_ARGUMENTS[$PROG]}"
+
     verbose "docker run --rm -i -t ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS"
+    #echo "docker run --rm -i -t ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS"
     docker run --rm -i -t ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS
 }
 
