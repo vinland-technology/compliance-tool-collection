@@ -10,6 +10,7 @@ FROM python:3.6
 ENV SCANCODE_VERSION=21.3.31
 ENV LICENSE_DETECTOR_VERSION=v4.2.0
 ENV MOUNT_DIR=compliance-tools
+ENV MOUNT_TMP_DIR=/tmp/compliance-tools
 
 
 
@@ -141,6 +142,7 @@ RUN cd compliance-scripts && git submodule init && git submodule update && chmod
 #RUN git clone https://github.com/oss-review-toolkit/ort.git
 #RUN cd ort && ./gradlew installDist
 
+RUN mkdir ${MOUNT_TMP_DIR}
 RUN mkdir ${MOUNT_DIR}
 WORKDIR   ${MOUNT_DIR}
 
