@@ -270,6 +270,33 @@ setup_scancode_wrapper()
         fi
         shift
     done
+
+
+    verbose "DIR_TO_SCAN: $DIR_TO_SCAN"
+    if [ -z "$DIR_TO_SCAN" ]
+    then
+        error "No directory (to scan) supplied"
+        exit 1
+    fi
+
+    # Remove trailing "/"
+    DIR_TO_SCAN=$(echo $DIR_TO_SCAN | sed 's,/$,,g')
+
+    NR_OF_SLASHES=$(echo $DIR_TO_SCAN | grep -c "/")
+    #echo "NR_OF_SLASHES: $NR_OF_SLASHES"
+    if [ $NR_OF_SLASHES -ne 0 ]
+    then
+        error "The supplied directory to scan (\"$DIR_TO_SCAN\") contains \"/\" which is not allowed."
+        error "Scancode-wrapper can only (for now) scan in the current directory"
+        exit 2
+    fi
+
+    if [ ! -d $DIR_TO_SCAN ]
+    then
+        error "The supplied directory to scan (\"$DIR_TO_SCAN\") does not seem to be a directory."
+        exit 3
+    fi
+    
     #DIR_TO_SCAN="$1"
     SC_REPORT=${DIR_TO_SCAN}-scan.json
     export PROG=scancode
