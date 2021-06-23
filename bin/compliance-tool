@@ -20,13 +20,18 @@ PROG=$(basename "$0")
 # compliance tools docker image settings
 #
 DOCKER_IMAGE=sandklef/compliance-tools
-DOCKER_TAG=0.2
+DOCKER_TAG=0.3
 
 DOCKER_ARGS=" ${DOCKER_IMAGE}:${DOCKER_TAG}"
 MOUNT_DIR=/compliance-tools
-DOCKER_MOUNT_ARGS="-v $(pwd):${MOUNT_DIR}"
+MOUNT_TMP_DIR=/tmp/compliance-tools
+DOCKER_MOUNT_ARGS="-v $(pwd):${MOUNT_DIR} -v ${MOUNT_TMP_DIR}:${MOUNT_TMP_DIR}"
 
 DEBUG=false
+
+
+declare -A PROGRAM_ARGUMENTS
+PROGRAM_ARGUMENTS["lookup-license"]=" --tmp-dir /tmp/conpliance-tool "
 
 error()
 {
@@ -98,8 +103,10 @@ run_docker()
 {
     local PROG=$1
     shift 
-    local ARGS="$*"
+    local ARGS="$* ${PROGRAM_ARGUMENTS[$PROG]}"
+
     verbose "docker run --rm -i -t ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS"
+    #echo "docker run --rm -i -t ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS"
     docker run --rm -i -t ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS
 }
 
@@ -107,6 +114,7 @@ docker_versions()
 {
     echo -n " * Aboutcode:                 " && run_docker about --version | grep "AboutCode-toolkit version" | cut -d " " -f 3
     echo -n " * Compliance utils:          " && run_docker flict-to-dot --version 
+    echo -n " * createnotices.py:          unknown" && echo
     echo -n " * Deltacode:                 " && run_docker deltacode --version | grep "DeltaCode version" | cut -d " " -f 3
     echo -n " * Flict:                     " && run_docker flict --version 
     echo -n " * License detector:          unknown" && echo 
@@ -234,22 +242,65 @@ usage()
     echo
     echo "SEEL ALSO"
     echo ""
-    echo "    misc tools       - https://github.com/vinland-technology/compliance-utils"
-    echo "    flict            - https://github.com/vinland-technology/flict"
-    echo "    license-detector - http://github.com/go-enry/go-license-detector"
-    echo "    ninka            - http://ninka.turingmachine.org/"
+    echo "    misc tools         - https://github.com/vinland-technology/compliance-utils"
+    echo "    compliance-scripts - https://github.com/armijnhemel/compliance-scripts/tree/master/copyright-statements"
+    echo "    flict              - https://github.com/vinland-technology/flict"
+    echo "    license-detector   - http://github.com/go-enry/go-license-detector"
+    echo "    ninka              - http://ninka.turingmachine.org/"
 #    echo "    ort              - https://github.com/oss-review-toolkit/ort" 
-    echo "    reuse            - https://reuse.software/"
-    echo "    scancode         - https://github.com/nexB/scancode-toolkit" 
+    echo "    reuse              - https://reuse.software/"
+    echo "    scancode           - https://github.com/nexB/scancode-toolkit" 
     echo ""
 }
 
 setup_scancode_wrapper()
 {
-    DIR_TO_SCAN="$1"
+    len=$#
+    EXTRA_ARGS=""
+    for i in $(seq 1 $len)
+    do
+        verbose "parsing  i: $i / $len"
+        if [ $i -eq $len ]
+        then
+            verbose " dir to scan: $1"
+            DIR_TO_SCAN="$1"
+        else
+            verbose " other arg: $1"
+            EXTRA_ARGS=" $EXTRA_ARGS $1 "
+        fi
+        shift
+    done
+
+
+    verbose "DIR_TO_SCAN: $DIR_TO_SCAN"
+    if [ -z "$DIR_TO_SCAN" ]
+    then
+        error "No directory (to scan) supplied"
+        exit 1
+    fi
+
+    # Remove trailing "/"
+    DIR_TO_SCAN=$(echo $DIR_TO_SCAN | sed 's,/$,,g')
+
+    NR_OF_SLASHES=$(echo $DIR_TO_SCAN | grep -c "/")
+    #echo "NR_OF_SLASHES: $NR_OF_SLASHES"
+    if [ $NR_OF_SLASHES -ne 0 ]
+    then
+        error "The supplied directory to scan (\"$DIR_TO_SCAN\") contains \"/\" which is not allowed."
+        error "Scancode-wrapper can only (for now) scan in the current directory"
+        exit 2
+    fi
+
+    if [ ! -d $DIR_TO_SCAN ]
+    then
+        error "The supplied directory to scan (\"$DIR_TO_SCAN\") does not seem to be a directory."
+        exit 3
+    fi
+    
+    #DIR_TO_SCAN="$1"
     SC_REPORT=${DIR_TO_SCAN}-scan.json
     export PROG=scancode
-    export ARGS=" -clipe --license-text --license-text-diagnostics --classify --license-clarity-score --summary --summary-key-files --summary-with-details ${PARALLEL_ARGS} --json ${SC_REPORT} ${DIR_TO_SCAN} "
+    export ARGS=" -clipe --license-text --license-text-diagnostics --classify --license-clarity-score --summary --summary-key-files --summary-with-details ${PARALLEL_ARGS} ${EXTRA_ARGS} --json-pp ${SC_REPORT} ${DIR_TO_SCAN} "
 
     verbose "Preparing PROG and ARGS for scancode"
     verbose " * PROG: $PROG"
@@ -304,7 +355,8 @@ case $PROG in
                     exit 0
                     ;;
                 "scancode-wrapper")
-                    setup_scancode_wrapper "$2"
+                    shift
+                    setup_scancode_wrapper $*
                     break
                     ;;
                 "--")

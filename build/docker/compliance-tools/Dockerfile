@@ -10,6 +10,7 @@ FROM python:3.6
 ENV SCANCODE_VERSION=21.3.31
 ENV LICENSE_DETECTOR_VERSION=v4.2.0
 ENV MOUNT_DIR=compliance-tools
+ENV MOUNT_TMP_DIR=/tmp/compliance-tools
 
 
 
@@ -30,7 +31,7 @@ RUN apt-get update && apt-get install -y bzip2 xz-utils zlib1g libxml2-dev libxs
 #######################################################
 RUN pip3 install license-expression spdx-license-list spdx-lookup
 RUN git clone https://github.com/vinland-technology/flict.git
-#RUN cd flict && pip3 install flict
+RUN cd flict && python3 setup.py install
 
 
 
@@ -115,11 +116,20 @@ RUN cd aboutcode-toolkit && ./configure
 
 #######################################################
 #
-# Scancode
+# Deltacode
 #
 #######################################################
 RUN git clone https://github.com/nexB/deltacode.git
 RUN cd deltacode && ./configure
+
+
+#######################################################
+#
+# Armijn's compliance-scripts
+#
+#######################################################
+RUN git clone https://github.com/armijnhemel/compliance-scripts.git
+RUN cd compliance-scripts && git submodule init && git submodule update && chmod a+x copyright-statements/createnotices.py
 
 
 
@@ -132,9 +142,10 @@ RUN cd deltacode && ./configure
 #RUN git clone https://github.com/oss-review-toolkit/ort.git
 #RUN cd ort && ./gradlew installDist
 
+RUN mkdir ${MOUNT_TMP_DIR}
 RUN mkdir ${MOUNT_DIR}
 WORKDIR   ${MOUNT_DIR}
 
 #ENV PATH=$HOME/scancode-toolkit-${SCANCODE_VERSION}:$HOME/compliance-utils/bin:$HOME/flict:$HOME/ort/cli/build/install/ort/bin/:/:$PATH
-ENV PATH=$HOME/scancode-toolkit-${SCANCODE_VERSION}:$HOME/aboutcode-toolkit:$HOME/deltacode:$HOME/compliance-utils/bin:$HOME/scancode-manifestor:/usr/local/bin:/:$PATH
+ENV PATH=$HOME/scancode-toolkit-${SCANCODE_VERSION}:$HOME/aboutcode-toolkit:$HOME/deltacode:$HOME/compliance-utils/bin:$HOME/scancode-manifestor:/usr/local/bin:/:/compliance-scripts/copyright-statements:$PATH
 
