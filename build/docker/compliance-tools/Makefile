@@ -8,7 +8,7 @@ CONTAINER_NAME=compliance-tools
 IMAGE_NAME=sandklef/${CONTAINER_NAME}
 
 MOUNT_DIR=/compliance-tools
-TAG=0.3
+TAG=0.4
 
 check:
 	@echo "IMAGE_NAME:     $(IMAGE_NAME)"
