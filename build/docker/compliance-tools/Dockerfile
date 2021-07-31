@@ -8,6 +8,7 @@ FROM python:3.6
 
 
 ENV SCANCODE_VERSION=21.3.31
+ENV FLICT_VERSION=0.1
 ENV LICENSE_DETECTOR_VERSION=v4.2.0
 ENV MOUNT_DIR=compliance-tools
 ENV MOUNT_TMP_DIR=/tmp/compliance-tools
@@ -32,8 +33,8 @@ RUN apt-get update && apt-get install -y bzip2 xz-utils zlib1g libxml2-dev libxs
 RUN pip3 install license-expression spdx-license-list spdx-lookup
 #RUN git clone https://github.com/vinland-technology/flict.git
 #RUN cd flict && python3 setup.py install
-RUN pip3 install git+https://github.com/vinland-technology/flict@main
-
+ADD "https://github.com/vinland-technology/flict/archive/refs/tags/${FLICT_VERSION}.zip" "flict.zip" 
+RUN unzip flict.zip && cd flict-${FLICT_VERSION} && pip3 install .
 
 
 
