@@ -14,8 +14,8 @@ compare_version()
     if [ ${MAKEFILE_VERSION} != ${SCRIPT_VERSION} ]
     then
         error "ERROR. Versions differ:"
-        error " * Makefile: ${MAKEFILE_VERSION}"
-        error " * script:   ${SCRIPT_VERSION} ]"
+        error " * build/docker/compliance-tools/Makefile: ${MAKEFILE_VERSION} "
+        error " * bin/compliance-tool:                    ${SCRIPT_VERSION}   "
         exit 1
     fi
     echo "OK  (${MAKEFILE_VERSION})"
