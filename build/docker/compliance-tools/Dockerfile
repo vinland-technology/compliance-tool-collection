@@ -31,8 +31,6 @@ RUN apt-get update && apt-get install -y bzip2 xz-utils zlib1g libxml2-dev libxs
 #
 #######################################################
 RUN pip3 install license-expression spdx-license-list spdx-lookup
-#RUN git clone https://github.com/vinland-technology/flict.git
-#RUN cd flict && python3 setup.py install
 ADD "https://github.com/vinland-technology/flict/archive/refs/tags/${FLICT_VERSION}.zip" "flict.zip" 
 RUN unzip flict.zip && cd flict-${FLICT_VERSION} && pip3 install .
 
@@ -43,7 +41,6 @@ RUN unzip flict.zip && cd flict-${FLICT_VERSION} && pip3 install .
 # License Detector
 #
 #######################################################
-RUN apt-get install -y golang
 ADD "https://github.com/go-enry/go-license-detector/releases/download/${LICENSE_DETECTOR_VERSION}/license-detector-${LICENSE_DETECTOR_VERSION}-linux-amd64.tar.gz" license-detector-${LICENSE_DETECTOR_VERSION}-linux-amd64.tar.gz
 RUN gunzip  license-detector-${LICENSE_DETECTOR_VERSION}-linux-amd64.tar.gz
 RUN tar xvf license-detector-${LICENSE_DETECTOR_VERSION}-linux-amd64.tar
@@ -78,7 +75,7 @@ RUN git clone https://github.com/vinland-technology/compliance-utils.git
 #
 #######################################################
 RUN git clone https://github.com/vinland-technology/scancode-manifestor.git
-
+RUN cd scancode-manifestor && pip3 install .
 
 
 
