@@ -388,4 +388,6 @@ esac
 check_image
 
 run_docker $PROG $ARGS
+RET=$?
 verbose "Running $PROG $* via docker"
+exit $RET
