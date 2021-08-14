@@ -1,5 +1,10 @@
 #!/bin/bash
 
+DEV_DIR=$(dirname ${BASH_SOURCE[0]})
+TOP_DIR=${DEV_DIR}/..
+PATH=${TOP_DIR}/bin:${PATH}
+COMPLIANCE_TOOL=${TOP_DIR}/bin/compliance-tool
+TOOLS="about flict-to-dot yoga yoda reusew lookup-license dependencies.sh createnotices.py deltacode flict license-detector ninka reuse scancode scancode-manifestor"
 
 error()
 {
@@ -72,7 +77,44 @@ compare_image_name()
     
 }
 
+which_command()
+{
+    CMD="$1"
+    WHERE="$(${COMPLIANCE_TOOL} which ${CMD} 2>&1 | sed 's,[\n\r]*,,g')"
+    RET=$?
+    printf "%-35s" "* check $CMD: "
+    if [ $RET -ne 0 ]
+    then
+        echo FAILED
+        exit 1
+    fi
+    echo "OK $WHERE"
+#    echo "OK ($WHERE)"
+#    echo "OK ($(echo $WHERE))"
+}
 
+
+exec_command()
+{
+    CMD="$*"
+    ${COMPLIANCE_TOOL} ${CMD} >/dev/null 2>&1
+    RET=$?
+    printf "%-35s" "* check $CMD: "
+    if [ $RET -ne 0 ]
+    then
+        echo FAILED
+        exit 1
+    fi
+    echo "OK"
+}
+
+verify_tools_presence()
+{
+    for tool in $TOOLS
+    do
+        which_command $tool
+    done
+}
 
 #
 # MAIN
@@ -81,7 +123,30 @@ compare_image_name()
 echo "Verifying meta information"
 
 compare_version
-
 compare_mounts
-
 compare_image_name
+
+echo "Veryfing all tools are present"
+verify_tools_presence
+
+echo "Verify tools work"
+exec_command about --version
+exec_command flict-to-dot --version
+exec_command yoga --version
+exec_command yoda --version
+exec_command reusew -h
+#exec_command lookup-license
+exec_command dependencies.sh --version
+exec_command createnotices.py -h
+exec_command deltacode --version
+exec_command flict --version
+#exec_command license-detector 
+#exec_command ninka 
+exec_command reuse --version
+exec_command scancode --version
+exec_command scancode-manifestor -h
+    
+echo
+echo
+echo "Yes :)"
+echo
