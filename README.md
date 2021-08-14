@@ -191,7 +191,7 @@ Theese tools (not the ones in the docker image) are licensed under GPL-3.0-or-la
 
 # Manual - Compliance tool 
 
-Manual (txt) here: [compliance-tools.txt](doc/compliance-tools.txt)
+Manual (txt) here: [compliance-tools.txt](doc/compliance-tool.txt)
 
 # Building the image
 
