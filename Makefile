@@ -6,8 +6,9 @@ all: check-version
 check-version:
 	@dev/check-release.sh
 
-build: check-version 
+build: 
 	cd build/docker/compliance-tools && make build
+	check_version
 
 show:
 	cd build/docker/compliance-tools && make docker-show
