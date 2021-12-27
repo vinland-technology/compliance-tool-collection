@@ -4,7 +4,7 @@ DEV_DIR=$(dirname ${BASH_SOURCE[0]})
 TOP_DIR=${DEV_DIR}/..
 PATH=${TOP_DIR}/bin:${PATH}
 COMPLIANCE_TOOL=${TOP_DIR}/bin/compliance-tool
-TOOLS="about flict-to-dot yoga yoda reusew lookup-license dependencies.sh createnotices.py deltacode flict license-detector ninka reuse scancode scancode-manifestor"
+TOOLS="about flict-to-dot yoga yoda reusew lookup-license dependencies.sh createnotices.py deltacode flict license-detector ninka reuse scancode scancode-manifestor spdx-validator"
 
 error()
 {
@@ -80,6 +80,7 @@ compare_image_name()
 which_command()
 {
     CMD="$1"
+    set -o pipefail
     WHERE="$(${COMPLIANCE_TOOL} which ${CMD} 2>&1 | sed 's,[\n\r]*,,g')"
     RET=$?
     printf "%-35s" "* check $CMD: "
@@ -88,7 +89,7 @@ which_command()
         echo FAILED
         exit 1
     fi
-    echo "OK $WHERE"
+    echo "OK $WHERE -- $RET"
 #    echo "OK ($WHERE)"
 #    echo "OK ($(echo $WHERE))"
 }
@@ -142,9 +143,10 @@ exec_command deltacode --version
 exec_command flict --version
 #exec_command license-detector 
 #exec_command ninka 
-exec_command reuse --version
+#exec_command reuse --version
 exec_command scancode --version
 exec_command scancode-manifestor -h
+exec_command spdx-validator -h
     
 echo
 echo

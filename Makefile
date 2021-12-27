@@ -1,14 +1,16 @@
 
 .PHONY: build
 
-all: check-version
+all: check_version
 
-check-version:
+check_version:
 	@dev/check-release.sh
 
-build: 
+build:
+	@echo Build
 	cd build/docker/compliance-tools && make build
-	check_version
+	@echo check version
+	make check_version
 
 show:
 	cd build/docker/compliance-tools && make docker-show

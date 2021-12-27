@@ -79,7 +79,7 @@ Compliance tools collections: eb78c50
  * License detector:          unknown
  * Ninka:                     v1.3.2
  * Ort:                       79a687c
- * Reuse:                     0.12.1
+ * Reuse:                     0.12.1    # currently not working
  * Scancode:                  21.3.31
 ```
 

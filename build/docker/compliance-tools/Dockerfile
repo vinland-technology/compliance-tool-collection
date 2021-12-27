@@ -30,9 +30,12 @@ RUN apt-get update && apt-get install -y bzip2 xz-utils zlib1g libxml2-dev libxs
 # Flict
 #
 #######################################################
-RUN pip3 install license-expression spdx-license-list spdx-lookup
-ADD "https://github.com/vinland-technology/flict/archive/refs/tags/${FLICT_VERSION}.zip" "flict.zip" 
-RUN unzip flict.zip && cd flict-${FLICT_VERSION} && pip3 install .
+RUN apt-get install -y python3
+RUN apt-get install -y python3-pip 
+RUN git clone https://github.com/vinland-technology/flict.git
+RUN cd flict && python3.9 -m pip install -r requirements.txt && python3.9 -m pip install .
+#ADD "https://github.com/vinland-technology/flict/archive/refs/tags/${FLICT_VERSION}.zip" "flict.zip" 
+#RUN unzip flict.zip && cd flict-${FLICT_VERSION} && pip3 install .
 
 
 
@@ -128,6 +131,16 @@ RUN cd deltacode && ./configure
 #######################################################
 RUN git clone https://github.com/armijnhemel/compliance-scripts.git
 RUN cd compliance-scripts && git submodule init && git submodule update && chmod a+x copyright-statements/createnotices.py
+
+
+
+#######################################################
+#
+# Henrik's spdx-validator (hesa... yeah, that's me)
+#
+#######################################################
+RUN git clone https://github.com/hesa/spdx-validator.git
+RUN cd spdx-validator && pip install .
 
 
 

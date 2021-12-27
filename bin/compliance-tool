@@ -20,7 +20,7 @@ PROG=$(basename "$0")
 # compliance tools docker image settings
 #
 DOCKER_IMAGE=sandklef/compliance-tools
-DOCKER_TAG=0.5.2
+DOCKER_TAG=0.5.4
 
 DOCKER_ARGS=" ${DOCKER_IMAGE}:${DOCKER_TAG}"
 MOUNT_DIR=/compliance-tools
@@ -257,23 +257,71 @@ usage()
 setup_scancode_wrapper()
 {
     len=$#
+    cnt=1
     EXTRA_ARGS=""
-    for i in $(seq 1 $len)
+    DIR_TO_SCAN=""
+    verbose "parsing $*"
+    while [ "$1" != "" ]
     do
-        verbose "parsing  i: $i / $len"
-        if [ $i -eq $len ]
+        verbose "parsing $cnt: $cnt / $len"
+        # if last arg (and DIR_TO_SCAN not, typically via git))
+        if [ $cnt -eq $len ] && [ "$DIR_TO_SCAN" == "" ]
         then
             verbose " dir to scan: $1"
             DIR_TO_SCAN="$1"
+        elif [ "$1" = "--repo" ]
+        then
+            GIT_REPO=$2
+            shift
+            cnt=$(( $cnt + 1 ))
+            verbose "clone repo $GIT_REPO"
+            git clone --depth=1 $GIT_REPO
+            exit_if_error $? "Failed cloning $GIT_REPO"
+            
+            GIT_DIR=$(basename $GIT_REPO | sed 's,\.git,,g')
+            verbose "repo dir $GIT_DIR"
+            #echo "here I am .... $GIT_DIR"
+            DIR_TO_SCAN=${GIT_DIR}
+            #echo "here I am .... $DIR_TO_SCAN"
+            if [ ! -d $DIR_TO_SCAN ]
+            then
+                error "Cloned directory not found in the folder we gussed: $DIR_TO_SCAN"
+                exit 1
+            fi
+        elif [ "$1" == "--tgz" ]
+        then
+            TARGZ=$2
+            shift
+            cnt=$(( $cnt + 1 ))
+             
+            curl -LJO ${TARGZ}
+            exit_if_error $? "Failed downloading $TARGZ"
+
+            TARGZ_FILE=$(basename ${TARGZ})
+            TARGZ_DIR=$(echo ${TARGZ_FILE} | sed 's,\.tar\.gz,,g')
+
+            mkdir ${TARGZ_DIR}            
+            exit_if_error $? "Failed creating $TARGZ_DIR"
+            
+            cd ${TARGZ_DIR}            
+            exit_if_error $? "Failed entering $TARGZ_DIR"
+            
+            tar zxvf ../${TARGZ_FILE}
+            exit_if_error $? "Failed unpacking $TARGZ_FILE"
+
+            cd -
+
+            DIR_TO_SCAN=${TARGZ_DIR}
+            
         else
             verbose " other arg: $1"
             EXTRA_ARGS=" $EXTRA_ARGS $1 "
         fi
         shift
+        cnt=$(( $cnt + 1 ))
+        verbose "<-- parsing $1: $cnt / $len  ($*)"
     done
 
-
-    verbose "DIR_TO_SCAN: $DIR_TO_SCAN"
     if [ -z "$DIR_TO_SCAN" ]
     then
         error "No directory (to scan) supplied"
@@ -377,7 +425,7 @@ case $PROG in
         done
         ;;
     "scancode-wrapper")
-        setup_scancode_wrapper "$1"
+        setup_scancode_wrapper $*
         ;;
     *)
         verbose "Ignoring $PROG since it is the program to start"
