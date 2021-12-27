@@ -120,7 +120,7 @@ docker_versions()
     echo -n " * License detector:          unknown" && echo 
     echo -n " * Ninka:                     " && run_docker ninka | head -1 | cut -d " " -f 2
 #    echo -n " * Ort:                       " && run_docker ort --version | grep version | cut -d "," -f 2 | cut -d " " -f 3 | sed 's,\.,,g'
-    echo -n " * Reuse:                     " && run_docker reuse --version | cut -d " " -f 2
+#    echo -n " * Reuse:                     " && run_docker reuse --version | cut -d " " -f 2
     echo -n " * Scancode:                  " && run_docker scancode --version | cut -d " " -f 3
     echo -n " * Scancode manifestor:       " && run_docker scancode-manifestor --version | cut -d " " -f 3
 }
