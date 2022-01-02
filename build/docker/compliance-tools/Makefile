@@ -8,7 +8,7 @@ CONTAINER_NAME=compliance-tools
 IMAGE_NAME=sandklef/${CONTAINER_NAME}
 
 MOUNT_DIR=/compliance-tools
-TAG=0.5.5
+TAG=0.5.6
 
 check:
 	@echo "IMAGE_NAME:     $(IMAGE_NAME)"
@@ -24,13 +24,14 @@ version:
 	@echo -n "flict version:    " && docker run -it --rm  --name $(CONTAINER_NAME) $(IMAGE_NAME):$(TAG) flict --version
 
 build:
-	docker build `pwd` -t $(IMAGE_NAME):$(TAG)
+	docker build `pwd` -t $(IMAGE_NAME):$(TAG)  -t $(IMAGE_NAME):latest
 
 nc-build:
 	docker build --no-cache `pwd` -t $(IMAGE_NAME):$(TAG)
 
 push:
 	docker push $(IMAGE_NAME):$(TAG)
+	docker push $(IMAGE_NAME):latest
 
 docker-wipe-c:
 	for c in `docker container ps -a |  grep compliance | awk '{print $$1}' | grep -v CONTA `; do docker container rm -f $$c; done
