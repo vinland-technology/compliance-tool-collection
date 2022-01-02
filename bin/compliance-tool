@@ -123,6 +123,7 @@ docker_versions()
 #    echo -n " * Reuse:                     " && run_docker reuse --version | cut -d " " -f 2
     echo -n " * Scancode:                  " && run_docker scancode --version | grep -v -e SPDX -e Output | cut -d " " -f 3
     echo -n " * Scancode manifestor:       " && run_docker scancode-manifestor --version | cut -d " " -f 3
+    echo -n " * Scarfer:                   " && run_docker scarfer --version | awk '{print $2}'
 }
 
 usage()
