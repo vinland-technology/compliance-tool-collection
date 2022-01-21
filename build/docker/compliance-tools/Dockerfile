@@ -143,6 +143,15 @@ RUN git clone https://github.com/hesa/spdx-validator.git
 RUN cd spdx-validator && pip install .
 
 
+#######################################################
+#
+# Henrik's scarfer (hesa... yeah, that's me)
+#
+#######################################################
+RUN git clone https://github.com/hesa/scarfer.git
+RUN cd scarfer && pip install .
+
+
 
 #######################################################
 #
