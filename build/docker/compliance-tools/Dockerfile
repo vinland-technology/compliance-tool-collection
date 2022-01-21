@@ -7,7 +7,7 @@ FROM python:3.6
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
-ENV SCANCODE_VERSION=21.8.4
+ENV SCANCODE_VERSION=30.1.0
 ENV FLICT_VERSION=0.1
 ENV LICENSE_DETECTOR_VERSION=v4.2.0
 ENV MOUNT_DIR=compliance-tools
@@ -141,6 +141,16 @@ RUN cd compliance-scripts && git submodule init && git submodule update && chmod
 #######################################################
 RUN git clone https://github.com/hesa/spdx-validator.git
 RUN cd spdx-validator && pip install .
+
+
+#######################################################
+#
+# Henrik's scarfer (hesa... yeah, that's me)
+#
+#######################################################
+RUN git clone https://github.com/hesa/scarfer.git
+RUN cd scarfer && pip install .
+
 
 
 #######################################################
