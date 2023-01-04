@@ -4,7 +4,7 @@ DEV_DIR=$(dirname ${BASH_SOURCE[0]})
 TOP_DIR=${DEV_DIR}/..
 PATH=${TOP_DIR}/bin:${PATH}
 COMPLIANCE_TOOL=${TOP_DIR}/bin/compliance-tool
-TOOLS="about flict-to-dot yoga yoda reusew lookup-license dependencies.sh createnotices.py deltacode flict license-detector ninka reuse scancode scancode-manifestor spdx-validator"
+TOOLS="about flict-to-dot yoga yoda reusew lookup-license dependencies.sh deltacode flict license-detector ninka reuse scancode scancode-manifestor spdx-validator"  # createnotices.py 
 
 error()
 {
@@ -138,7 +138,7 @@ exec_command yoda --version
 exec_command reusew -h
 #exec_command lookup-license
 exec_command dependencies.sh --version
-exec_command createnotices.py -h
+#exec_command createnotices.py -h
 exec_command deltacode --version
 exec_command flict --version
 #exec_command license-detector 
