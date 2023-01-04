@@ -105,9 +105,14 @@ run_docker()
     shift 
     local ARGS="$* ${PROGRAM_ARGUMENTS[$PROG]}"
 
-    verbose "docker run --rm -i -t ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS"
-    #echo "docker run --rm -i -t ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS"
-    docker run --rm -i -t ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS
+    DOCKER_RUN_OPTS="--rm -i"
+    if [ "$PROG" = "bash" ] || [ "$PROG" = "scancode" ]
+    then
+        DOCKER_RUN_OPTS="$DOCKER_RUN_OPTS -t"
+    fi
+        
+    verbose "docker run ${DOCKER_RUN_OPTS} ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS"
+    docker run  ${DOCKER_RUN_OPTS} ${DOCKER_MOUNT_ARGS} ${DOCKER_ARGS} $PROG $ARGS
 }
 
 docker_versions()
@@ -265,11 +270,10 @@ setup_scancode_wrapper()
     while [ "$1" != "" ]
     do
         verbose "parsing $cnt: $cnt / $len"
-        # if last arg (and DIR_TO_SCAN not, typically via git))
-        if [ $cnt -eq $len ] && [ "$DIR_TO_SCAN" == "" ]
+        if [ "$1" = "--version" ] || [ "$1" = "-V" ]
         then
-            verbose " dir to scan: $1"
-            DIR_TO_SCAN="$1"
+            echo "scancode-wrapper (Compliance tools collection): $COMPLIANCE_UTILS_VERSION"
+            exit 0
         elif [ "$1" = "--repo" ]
         then
             GIT_REPO=$2
@@ -314,6 +318,12 @@ setup_scancode_wrapper()
 
             DIR_TO_SCAN=${TARGZ_DIR}
             
+        # if last arg (and DIR_TO_SCAN not, typically via git))
+        elif [ $cnt -eq $len ] && [ "$DIR_TO_SCAN" == "" ]
+        then
+            verbose " dir to scan: $1"
+            DIR_TO_SCAN="$1"
+           
         else
             verbose " other arg: $1"
             EXTRA_ARGS=" $EXTRA_ARGS $1 "
@@ -383,12 +393,12 @@ case $PROG in
                     bash
                     exit 0
                     ;;
-                "--version")
-                    echo "Compliance tools collections: $COMPLIANCE_UTILS_VERSION"
+                "--version"|"-V")
+                    echo "Compliance tools collection: $COMPLIANCE_UTILS_VERSION"
                     exit 0
                     ;;
                 "--versions")
-                    echo "Compliance tools collections: $COMPLIANCE_UTILS_VERSION"
+                    echo "Compliance tools collection: $COMPLIANCE_UTILS_VERSION"
                     check_image
                     docker_versions
                     exit 0
