@@ -20,7 +20,7 @@ PROG=$(basename "$0")
 # compliance tools docker image settings
 #
 DOCKER_IMAGE=sandklef/compliance-tools
-DOCKER_TAG=0.5.7
+DOCKER_TAG=0.5.8
 
 DOCKER_ARGS=" ${DOCKER_IMAGE}:${DOCKER_TAG}"
 MOUNT_DIR=/compliance-tools

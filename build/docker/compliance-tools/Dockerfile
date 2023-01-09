@@ -155,16 +155,6 @@ RUN cd scarfer && pip install .
 
 #######################################################
 #
-# Henrik's scarfer (hesa... yeah, that's me)
-#
-#######################################################
-RUN git clone https://github.com/hesa/scarfer.git
-RUN cd scarfer && pip install .
-
-
-
-#######################################################
-#
 # ORT / Open Source Review Toolkit
 #
 #######################################################
