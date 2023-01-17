@@ -421,7 +421,7 @@ case $PROG in
                     docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
                     exit 0
                     ;;
-                "scancode-wrapper")
+                "scancode-wrapper"|"sw")
                     shift
                     setup_scancode_wrapper $*
                     break
