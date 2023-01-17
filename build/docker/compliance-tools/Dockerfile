@@ -103,6 +103,7 @@ RUN apt-get install -y ninka ninka-backend-excel ninka-backend-sqlite
 #RUN tar xvf scancode-toolkit-${SCANCODE_VERSION}_sources.tar
 #RUN
 RUN pip install scancode-toolkit
+RUN scancode --reindex-licenses
 
 
 #######################################################

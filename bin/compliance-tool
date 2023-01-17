@@ -7,12 +7,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 
-COMPLIANCE_UTILS_VERSION=__COMPLIANCE_UTILS_VERSION__
-if [ "${COMPLIANCE_UTILS_VERSION}" = "__COMPLIANCE_UTILS_VERSION__" ]
-then
-    GIT_DIR=$(dirname ${BASH_SOURCE[0]})
-    COMPLIANCE_UTILS_VERSION=$(cd $GIT_DIR && git rev-parse --short HEAD)
-fi
+
 
 PROG=$(basename "$0")
 
@@ -21,6 +16,7 @@ PROG=$(basename "$0")
 #
 DOCKER_IMAGE=sandklef/compliance-tools
 DOCKER_TAG=0.5.9
+COMPLIANCE_TOOL_VERSION=${DOCKER_TAG}
 
 DOCKER_ARGS=" ${DOCKER_IMAGE}:${DOCKER_TAG}"
 MOUNT_DIR=/compliance-tools
@@ -213,7 +209,13 @@ usage()
     echo "          Starts scancode with the arguments [ARGS]"
     echo
     echo "    scancode-wrapper [DIR]"
-    echo "          Starts scan (Scancode) of DIR, storing result in DIR-scan.json"
+    echo "          Scan (Scancode) of DIR, storing result in DIR-scan.json"
+    echo ""
+    echo "    scancode-wrapper --repo [REPO]"
+    echo "          Git clone and scan (Scancode) of REPO, storing result in *-scan.json"
+    echo
+    echo "    repo-license [REPO]"
+    echo "          Git clone REPO, scan (Scancode) repo, exract license of REPO"
     echo
     echo "    pull"
     echo "          Pulls the docker image $DOCKER_IMAGE ($DOCKER_TAG)"
@@ -260,6 +262,11 @@ usage()
     echo ""
 }
 
+git_dir()
+{
+    basename $1 | sed 's,\.git,,g'
+}
+
 setup_scancode_wrapper()
 {
     len=$#
@@ -272,7 +279,7 @@ setup_scancode_wrapper()
         verbose "parsing $cnt: $cnt / $len"
         if [ "$1" = "--version" ] || [ "$1" = "-V" ]
         then
-            echo "scancode-wrapper (Compliance tools collection): $COMPLIANCE_UTILS_VERSION"
+            echo "scancode-wrapper (Compliance tools collection): $COMPLIANCE_TOOL_VERSION"
             exit 0
         elif [ "$1" = "--repo" ]
         then
@@ -283,7 +290,7 @@ setup_scancode_wrapper()
             git clone --depth=1 $GIT_REPO
             exit_if_error $? "Failed cloning $GIT_REPO"
             
-            GIT_DIR=$(basename $GIT_REPO | sed 's,\.git,,g')
+            GIT_DIR=$(git_dir $GIT_REPO)
             verbose "repo dir $GIT_DIR"
             #echo "here I am .... $GIT_DIR"
             DIR_TO_SCAN=${GIT_DIR}
@@ -394,11 +401,11 @@ case $PROG in
                     exit 0
                     ;;
                 "--version"|"-V")
-                    echo "Compliance tools collection: $COMPLIANCE_UTILS_VERSION"
+                    echo "Compliance tools collection: $COMPLIANCE_TOOL_VERSION"
                     exit 0
                     ;;
                 "--versions")
-                    echo "Compliance tools collection: $COMPLIANCE_UTILS_VERSION"
+                    echo "Compliance tools collection: $COMPLIANCE_TOOL_VERSION"
                     check_image
                     docker_versions
                     exit 0
@@ -414,10 +421,20 @@ case $PROG in
                     docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
                     exit 0
                     ;;
-                "scancode-wrapper")
+                "scancode-wrapper"|"sw")
                     shift
                     setup_scancode_wrapper $*
                     break
+                    ;;
+                "repo-license"|"rl")
+                    shift
+                    echo "Scan repository: $*"
+                    $0 scancode-wrapper --repo $*
+                    GIT_DIR=$(git_dir $1)
+                    SCAN_FILE=${GIT_DIR}-scan.json
+                    echo "Identify license for : $SCAN_FILE"
+                    run_docker scarfer $SCAN_FILE -ls
+                    exit 0
                     ;;
                 "--")
                     shift
