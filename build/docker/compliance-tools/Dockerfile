@@ -59,16 +59,6 @@ RUN pip3 install reuse
 
 
 
-
-
-#######################################################
-#
-# Compliance Utils
-#
-#######################################################
-RUN git clone https://github.com/vinland-technology/compliance-utils.git
-
-
 #######################################################
 #
 # Scancode Manifestor
@@ -163,9 +153,25 @@ RUN cd scarfer && pip install .
 #RUN git clone https://github.com/oss-review-toolkit/ort.git
 #RUN cd ort && ./gradlew installDist
 
+
+
+
+
+#######################################################
+#
+# Compliance Utils
+#
+#######################################################
+RUN pip3.8 install spdx-lookup spdx-license-list spdx-tools
+RUN git clone https://github.com/vinland-technology/compliance-utils.git
+
+RUN pip3 uninstall -y spdx
+RUN pip3.8 uninstall -y spdx
+RUN pip3 install spdx==2.5.1
+RUN pip3.8 install spdx==2.5.1
+
 RUN mkdir ${MOUNT_TMP_DIR}
 RUN mkdir ${MOUNT_DIR}
 WORKDIR   ${MOUNT_DIR}
 
 ENV PATH=$HOME/scancode-toolkit-${SCANCODE_VERSION}:$HOME/aboutcode-toolkit:$HOME/deltacode:$HOME/compliance-utils/bin:$HOME/scancode-manifestor:/usr/local/bin:/:/compliance-scripts/copyright-statements:$PATH
-

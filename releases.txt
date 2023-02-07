@@ -1,0 +1,11 @@
+# 0.5.11
+
+* new version of scarfer
+
+** https://github.com/hesa/scarfer
+
+** https://pypi.org/project/scarfer/
+
+
+
+
