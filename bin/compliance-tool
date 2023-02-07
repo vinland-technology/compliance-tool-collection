@@ -193,11 +193,17 @@ usage()
     echo "    bash"
     echo "          Starts a bash session in docker"
     echo
+    echo "    dependencies.sh [ARGS]"
+    echo "          recursively find dependencies for an ELF program"
+    echo
     echo "    flict [ARGS]"
     echo "          Starts flict with the arguments [ARGS]"
     echo
     echo "    license-detector [ARGS]"
     echo "          Starts license-detector with the arguments [ARGS]"
+    echo
+    echo "    lookup-license"
+    echo "          interactively match a license text to a license"
     echo
     echo "    ninka [ARGS]"
     echo "          Starts ninka with the arguments [ARGS]"
