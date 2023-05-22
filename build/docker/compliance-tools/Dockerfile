@@ -35,6 +35,17 @@ RUN git clone https://github.com/vinland-technology/flict.git
 RUN cd flict && python3.9 -m pip install -r requirements.txt && python3.9 -m pip install .
 
 
+#######################################################
+#
+# Naive FOSS Health checker
+#
+#######################################################
+RUN apt-get install -y python3
+RUN apt-get install -y python3-pip 
+RUN git clone https://github.com/hesa/foss-health.git
+RUN cd flict && python3.9 -m pip install -r requirements.txt && python3.9 -m pip install .
+
+
 
 #######################################################
 #
