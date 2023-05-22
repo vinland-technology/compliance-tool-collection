@@ -15,7 +15,7 @@ PROG=$(basename "$0")
 # compliance tools docker image settings
 #
 DOCKER_IMAGE=sandklef/compliance-tools
-DOCKER_TAG=0.5.12
+DOCKER_TAG=0.5.13
 COMPLIANCE_TOOL_VERSION=${DOCKER_TAG}
 
 DOCKER_ARGS=" ${DOCKER_IMAGE}:${DOCKER_TAG}"
