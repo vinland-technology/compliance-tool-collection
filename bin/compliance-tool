@@ -23,6 +23,14 @@ MOUNT_DIR=/compliance-tools
 MOUNT_TMP_DIR=/tmp/compliance-tools
 DOCKER_MOUNT_ARGS="-v $(pwd):${MOUNT_DIR} -v ${MOUNT_TMP_DIR}:${MOUNT_TMP_DIR}"
 
+OS=$(uname)
+
+case "$OS" in 
+  *CYGWIN*)
+      DOCKER_MOUNT_ARGS="-v $(cygpath -w $(pwd)):${MOUNT_DIR} -v $(cygpath -w ${MOUNT_TMP_DIR}):${MOUNT_TMP_DIR}"
+    ;;
+esac
+
 DEBUG=false
 
 
