@@ -132,8 +132,8 @@ RUN cd aboutcode-toolkit && ./configure
 # Deltacode
 #
 #######################################################
-RUN git clone https://github.com/nexB/deltacode.git
-RUN cd deltacode && ./configure
+#RUN git clone https://github.com/nexB/deltacode.git
+#RUN cd deltacode && ./configure
 
 
 #######################################################
