@@ -37,18 +37,6 @@ RUN cd flict && python3.9 -m pip install -r requirements.txt && python3.9 -m pip
 
 #######################################################
 #
-# Naive FOSS Health checker
-#
-#######################################################
-RUN apt-get install -y python3
-RUN apt-get install -y python3-pip 
-RUN git clone https://github.com/hesa/foss-health.git
-RUN cd flict && python3.9 -m pip install -r requirements.txt && python3.9 -m pip install .
-
-
-
-#######################################################
-#
 # License Detector
 #
 #######################################################
@@ -173,6 +161,20 @@ RUN cd scarfer && pip install .
 #RUN apt-get install -y openjdk-11-jdk-headless
 #RUN git clone https://github.com/oss-review-toolkit/ort.git
 #RUN cd ort && ./gradlew installDist
+
+
+#######################################################
+#
+# Naive FOSS Health checker
+#
+#######################################################
+RUN apt-get install -y python3
+RUN apt-get install -y python3-pip
+RUN git clone https://github.com/hesa/foss-health.git
+RUN cd foss-health && python3.9 -m pip install -r requirements.txt && python3.9 -m pip install --use-pep517 . 
+
+
+
 
 RUN mkdir ${MOUNT_TMP_DIR}
 RUN mkdir ${MOUNT_DIR}
