@@ -58,16 +58,6 @@ RUN pip3 install reuse
 
 
 
-
-
-#######################################################
-#
-# Compliance Utils
-#
-#######################################################
-RUN git clone https://github.com/vinland-technology/compliance-utils.git
-
-
 #######################################################
 #
 # Scancode Manifestor
@@ -163,6 +153,15 @@ RUN cd scarfer && pip install .
 #RUN cd ort && ./gradlew installDist
 
 
+
+#######################################################
+#
+# Compliance Utils
+#
+#######################################################
+RUN pip3.8 install spdx-lookup spdx-license-list spdx-tools
+RUN git clone https://github.com/vinland-technology/compliance-utils.git
+
 #######################################################
 #
 # Naive FOSS Health checker
@@ -173,7 +172,10 @@ RUN apt-get install -y python3-pip
 RUN git clone https://github.com/hesa/foss-health.git
 RUN cd foss-health && python3.9 -m pip install -r requirements.txt && python3.9 -m pip install --use-pep517 . 
 
-
+RUN pip3 uninstall -y spdx
+RUN pip3.8 uninstall -y spdx
+RUN pip3 install spdx==2.5.1
+RUN pip3.8 install spdx==2.5.1
 
 
 RUN mkdir ${MOUNT_TMP_DIR}
@@ -181,4 +183,3 @@ RUN mkdir ${MOUNT_DIR}
 WORKDIR   ${MOUNT_DIR}
 
 ENV PATH=$HOME/scancode-toolkit-${SCANCODE_VERSION}:$HOME/aboutcode-toolkit:$HOME/deltacode:$HOME/compliance-utils/bin:$HOME/scancode-manifestor:/usr/local/bin:/:/compliance-scripts/copyright-statements:$PATH
-

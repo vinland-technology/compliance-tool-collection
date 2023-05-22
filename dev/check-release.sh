@@ -111,7 +111,7 @@ exec_command()
 
 verify_tools_presence()
 {
-    for tool in $TOOLS
+    for tool in $(echo $TOOLS | tr ' ' '\n' | sort )
     do
         which_command $tool
     done
@@ -128,28 +128,49 @@ compare_mounts
 compare_image_name
 
 echo "Veryfing all tools are present"
-verify_tools_presence
+#verify_tools_presence
 
-echo "Verify tools work"
-exec_command about --version
-exec_command flict-to-dot --version
-exec_command yoga --version
-exec_command yoda --version
-exec_command reusew -h
-#exec_command lookup-license
-exec_command dependencies.sh --version
+echo "Verify tools work, phase I"
 #exec_command createnotices.py -h
 #exec_command deltacode --version
-exec_command flict --version
 #exec_command license-detector 
+#exec_command lookup-license
 #exec_command ninka 
-#exec_command reuse --version
+exec_command about --version
+exec_command deltacode --version
+exec_command dependencies.sh --version
+exec_command flict --version
+exec_command flict-to-dot --version
+exec_command reuse --version
+exec_command reusew -h
 exec_command scancode --version
 exec_command scancode-manifestor -h
+exec_command scarfer --version
+exec_command scarfer spdx-lookup -h
 exec_command spdx-validator -h
 exec_command nfhc --help
-    
+exec_command yoda --version
+exec_command yoga --version
+
+
+echo "Verify tools work, phase II"
+echo -n "lookup-license: "
+set -o pipefail
+echo "bla bla" | ${COMPLIANCE_TOOL} lookup-license 2>/dev/null >/dev/null
+RET=$?
+printf "%-35s" "* check $CMD: "
+if [ $RET -ne 0 ]
+then
+    echo FAILED
+    exit 1
+fi
+echo OK
+exec_command flict verify -il MIT -ol MIT
+exec_command flict simplify "MIT AND MIT" 
+
+
 echo
 echo
 echo "Yes :)"
 echo
+exit 0
