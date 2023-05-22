@@ -4,7 +4,7 @@ DEV_DIR=$(dirname ${BASH_SOURCE[0]})
 TOP_DIR=${DEV_DIR}/..
 PATH=${TOP_DIR}/bin:${PATH}
 COMPLIANCE_TOOL=${TOP_DIR}/bin/compliance-tool
-TOOLS="about flict-to-dot yoga yoda reusew lookup-license dependencies.sh deltacode flict license-detector ninka reuse scancode scancode-manifestor spdx-lookup spdx-validator"  # createnotices.py 
+TOOLS="about flict-to-dot yoga yoda reusew lookup-license dependencies.sh nfhc flict license-detector ninka reuse scancode scancode-manifestor spdx-validator"  # createnotices.py 
 
 error()
 {
@@ -132,6 +132,7 @@ echo "Veryfing all tools are present"
 
 echo "Verify tools work, phase I"
 #exec_command createnotices.py -h
+#exec_command deltacode --version
 #exec_command license-detector 
 #exec_command lookup-license
 #exec_command ninka 
@@ -147,6 +148,7 @@ exec_command scancode-manifestor -h
 exec_command scarfer --version
 exec_command scarfer spdx-lookup -h
 exec_command spdx-validator -h
+exec_command nfhc --help
 exec_command yoda --version
 exec_command yoga --version
 

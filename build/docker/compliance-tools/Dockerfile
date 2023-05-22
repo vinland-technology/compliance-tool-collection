@@ -35,7 +35,6 @@ RUN git clone https://github.com/vinland-technology/flict.git
 RUN cd flict && python3.9 -m pip install -r requirements.txt && python3.9 -m pip install .
 
 
-
 #######################################################
 #
 # License Detector
@@ -111,8 +110,8 @@ RUN cd aboutcode-toolkit && ./configure
 # Deltacode
 #
 #######################################################
-RUN git clone https://github.com/nexB/deltacode.git
-RUN cd deltacode && ./configure
+#RUN git clone https://github.com/nexB/deltacode.git
+#RUN cd deltacode && ./configure
 
 
 #######################################################
@@ -155,8 +154,6 @@ RUN cd scarfer && pip install .
 
 
 
-
-
 #######################################################
 #
 # Compliance Utils
@@ -165,10 +162,21 @@ RUN cd scarfer && pip install .
 RUN pip3.8 install spdx-lookup spdx-license-list spdx-tools
 RUN git clone https://github.com/vinland-technology/compliance-utils.git
 
+#######################################################
+#
+# Naive FOSS Health checker
+#
+#######################################################
+RUN apt-get install -y python3
+RUN apt-get install -y python3-pip
+RUN git clone https://github.com/hesa/foss-health.git
+RUN cd foss-health && python3.9 -m pip install -r requirements.txt && python3.9 -m pip install --use-pep517 . 
+
 RUN pip3 uninstall -y spdx
 RUN pip3.8 uninstall -y spdx
 RUN pip3 install spdx==2.5.1
 RUN pip3.8 install spdx==2.5.1
+
 
 RUN mkdir ${MOUNT_TMP_DIR}
 RUN mkdir ${MOUNT_DIR}

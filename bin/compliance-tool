@@ -23,6 +23,14 @@ MOUNT_DIR=/compliance-tools
 MOUNT_TMP_DIR=/tmp/compliance-tools
 DOCKER_MOUNT_ARGS="-v $(pwd):${MOUNT_DIR} -v ${MOUNT_TMP_DIR}:${MOUNT_TMP_DIR}"
 
+OS=$(uname)
+
+case "$OS" in 
+  *CYGWIN*)
+      DOCKER_MOUNT_ARGS="-v $(cygpath -w $(pwd)):${MOUNT_DIR} -v $(cygpath -w ${MOUNT_TMP_DIR}):${MOUNT_TMP_DIR}"
+    ;;
+esac
+
 DEBUG=false
 
 
@@ -116,7 +124,7 @@ docker_versions()
     echo -n " * Aboutcode:                 " && run_docker about --version | grep "AboutCode-toolkit version" | cut -d " " -f 3
     echo -n " * Compliance utils:          " && run_docker flict-to-dot --version 
     echo -n " * createnotices.py:          unknown" && echo
-    echo -n " * Deltacode:                 " && run_docker deltacode --version | grep "DeltaCode version" | cut -d " " -f 3
+#    echo -n " * Deltacode:                 " && run_docker deltacode --version | grep "DeltaCode version" | cut -d " " -f 3
     echo -n " * Flict:                     " && run_docker flict --version 
     echo -n " * License detector:          unknown" && echo 
     echo -n " * Ninka:                     " && run_docker ninka | head -1 | cut -d " " -f 2
@@ -125,6 +133,7 @@ docker_versions()
     echo -n " * Scancode:                  " && run_docker scancode --version | grep -v -e SPDX -e Output | cut -d " " -f 3
     echo -n " * Scancode manifestor:       " && run_docker scancode-manifestor --version | cut -d " " -f 3
     echo -n " * Scarfer:                   " && run_docker scarfer --version | awk '{print $2}'
+    echo -n " * nfhc:                   " && run_docker nfhc --version | awk '{print $2}'
 }
 
 usage()
