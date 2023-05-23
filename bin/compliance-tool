@@ -28,14 +28,22 @@ OS=$(uname)
 case "$OS" in 
   *CYGWIN*)
       DOCKER_MOUNT_ARGS="-v $(cygpath -w $(pwd)):${MOUNT_DIR} -v $(cygpath -w ${MOUNT_TMP_DIR}):${MOUNT_TMP_DIR}"
+      ;;
+  
+  *Darwin*)
+      PARALLEL_ARGS=""
+      ;;
+  *)
+      # Measure on host, use in docker (same as host)
+      PARALLEL_ARGS=" -n $(cat /proc/cpuinfo | grep processor | wc -l) "
     ;;
 esac
 
 DEBUG=false
 
 
-declare -A PROGRAM_ARGUMENTS
-PROGRAM_ARGUMENTS["lookup-license"]=" --tmp-dir /tmp/conpliance-tool "
+#declare -A PROGRAM_ARGUMENTS
+#PROGRAM_ARGUMENTS["lookup-license"]=" --tmp-dir /tmp/conpliance-tool "
 
 error()
 {
@@ -103,11 +111,27 @@ dload_image()
     fi
 }
 
+
+set_program_arguments()
+{
+    PROGRAM=$1
+    case "$PROGRAM" in	
+	"lookup-license")
+	    PROGRAM_ARGUMENTS=" --tmp-dir /tmp/conpliance-tool "
+	    ;;
+	*)
+	    PROGRAM_ARGUMENTS=""
+	    ;;
+    esac    
+}
+
+
 run_docker()
 {
     local PROG=$1
-    shift 
-    local ARGS="$* ${PROGRAM_ARGUMENTS[$PROG]}"
+    shift
+    set_program_arguments $PROG
+    local ARGS="$* ${PROGRAM_ARGUMENTS}"
 
     DOCKER_RUN_OPTS="--rm -i"
     if [ "$PROG" = "bash" ] || [ "$PROG" = "scancode" ]
@@ -394,8 +418,6 @@ setup_scancode_wrapper()
 
 verbose "$PROG"
 ARGS=$*
-# Measure on host, use in docker (same as host)
-PARALLEL_ARGS=" -n $(cat /proc/cpuinfo | grep processor | wc -l) "
 
 verbose "check $PROG"
 case $PROG in
