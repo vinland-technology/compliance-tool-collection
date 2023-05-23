@@ -214,6 +214,9 @@ usage()
     echo "    lookup-license"
     echo "          interactively match a license text to a license"
     echo
+    echo "    nfhc [ARGS]"
+    echo "          Starts nfhc with the arguments [ARGS]"
+    echo
     echo "    ninka [ARGS]"
     echo "          Starts ninka with the arguments [ARGS]"
     echo
