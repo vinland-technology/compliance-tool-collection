@@ -15,7 +15,7 @@ PROG=$(basename "$0")
 # compliance tools docker image settings
 #
 DOCKER_IMAGE=sandklef/compliance-tools
-DOCKER_TAG=0.5.12
+DOCKER_TAG=0.5.14
 COMPLIANCE_TOOL_VERSION=${DOCKER_TAG}
 
 DOCKER_ARGS=" ${DOCKER_IMAGE}:${DOCKER_TAG}"
@@ -40,10 +40,6 @@ case "$OS" in
 esac
 
 DEBUG=false
-
-
-#declare -A PROGRAM_ARGUMENTS
-#PROGRAM_ARGUMENTS["lookup-license"]=" --tmp-dir /tmp/conpliance-tool "
 
 error()
 {
@@ -117,7 +113,7 @@ set_program_arguments()
     PROGRAM=$1
     case "$PROGRAM" in	
 	"lookup-license")
-	    PROGRAM_ARGUMENTS=" --tmp-dir /tmp/conpliance-tool "
+	    PROGRAM_ARGUMENTS=" --tmp-dir /tmp/compliance-tool "
 	    ;;
 	*)
 	    PROGRAM_ARGUMENTS=""
@@ -145,7 +141,7 @@ run_docker()
 
 docker_versions()
 {
-    echo -n " * Aboutcode:                 " && run_docker about --version | grep "AboutCode-toolkit version" | cut -d " " -f 3
+#    echo -n " * Aboutcode:                 " && run_docker about --version | grep "AboutCode-toolkit version" | cut -d " " -f 3
     echo -n " * Compliance utils:          " && run_docker flict-to-dot --version 
     echo -n " * createnotices.py:          unknown" && echo
 #    echo -n " * Deltacode:                 " && run_docker deltacode --version | grep "DeltaCode version" | cut -d " " -f 3

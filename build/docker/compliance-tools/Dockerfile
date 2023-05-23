@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.11
 
 # FOSS Compliance Utils / compliance-tool
 #
@@ -8,7 +8,6 @@ FROM python:3.8
 
 
 ENV LICENSE_DETECTOR_VERSION=v4.2.0
-ENV SCANCODE_VERSION=v31.2.3
 ENV MOUNT_DIR=compliance-tools
 ENV MOUNT_TMP_DIR=/tmp/compliance-tools
 
@@ -29,10 +28,8 @@ RUN apt-get update && apt-get install -y bzip2 xz-utils zlib1g libxml2-dev libxs
 # Flict
 #
 #######################################################
-RUN apt-get install -y python3
-RUN apt-get install -y python3-pip 
 RUN git clone https://github.com/vinland-technology/flict.git
-RUN cd flict && python3.9 -m pip install -r requirements.txt && python3.9 -m pip install .
+RUN cd flict && pip3 install -r requirements.txt && pip3 install .
 
 
 #######################################################
@@ -83,35 +80,9 @@ RUN apt-get install -y ninka ninka-backend-excel ninka-backend-sqlite
 # Scancode
 #
 #######################################################
-# ADD https://github.com/nexB/scancode-toolkit/releases/download/${SCANCODE_VERSION}/scancode-toolkit-${SCANCODE_VERSION}_py3.8-linux.tar.gz scancode-toolkit-${SCANCODE_VERSION}_py3.8-linux.tar.gz
-# RUN gunzip scancode-toolkit-${SCANCODE_VERSION}_py3.8-linux.tar.gz 
-# RUN tar xvf scancode-toolkit-${SCANCODE_VERSION}_py3.8-linux.tar
-
-#ADD https://github.com/nexB/scancode-toolkit/releases/download/${SCANCODE_VERSION}/scancode-toolkit-${SCANCODE_VERSION}_sources.tar.gz scancode-toolkit-${SCANCODE_VERSION}_sources.tar.gz
-#RUN gunzip  scancode-toolkit-${SCANCODE_VERSION}_sources.tar.gz
-#RUN tar xvf scancode-toolkit-${SCANCODE_VERSION}_sources.tar
-#RUN
-RUN pip install scancode-toolkit
+# get requirements, just in case
+RUN pip3 install scancode-toolkit==31.2.6
 RUN scancode --reindex-licenses
-
-
-#######################################################
-#
-# Aboutcode (hesa's fork)
-#
-#######################################################
-# TODO: get from nexb
-RUN git clone https://github.com/hesa/aboutcode-toolkit.git
-RUN cd aboutcode-toolkit && git pull --all && git checkout hesa_devel
-RUN cd aboutcode-toolkit && ./configure
-
-#######################################################
-#
-# Deltacode
-#
-#######################################################
-#RUN git clone https://github.com/nexB/deltacode.git
-#RUN cd deltacode && ./configure
 
 
 #######################################################
@@ -159,7 +130,7 @@ RUN cd scarfer && pip install .
 # Compliance Utils
 #
 #######################################################
-RUN pip3.8 install spdx-lookup spdx-license-list spdx-tools
+RUN pip3 install spdx-lookup spdx-license-list spdx-tools
 RUN git clone https://github.com/vinland-technology/compliance-utils.git
 
 #######################################################
@@ -172,14 +143,11 @@ RUN apt-get install -y python3-pip
 RUN git clone https://github.com/hesa/foss-health.git
 RUN cd foss-health && python3.9 -m pip install -r requirements.txt && python3.9 -m pip install --use-pep517 . 
 
-RUN pip3 uninstall -y spdx
-RUN pip3.8 uninstall -y spdx
-RUN pip3 install spdx==2.5.1
-RUN pip3.8 install spdx==2.5.1
+RUN pip3 install spdx
 
 
 RUN mkdir ${MOUNT_TMP_DIR}
 RUN mkdir ${MOUNT_DIR}
 WORKDIR   ${MOUNT_DIR}
 
-ENV PATH=$HOME/scancode-toolkit-${SCANCODE_VERSION}:$HOME/aboutcode-toolkit:$HOME/deltacode:$HOME/compliance-utils/bin:$HOME/scancode-manifestor:/usr/local/bin:/:/compliance-scripts/copyright-statements:$PATH
+ENV PATH=$HOME/compliance-utils/bin:$HOME/scancode-manifestor:/usr/local/bin:/:/compliance-scripts/copyright-statements:$PATH
