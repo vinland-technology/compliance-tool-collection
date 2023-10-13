@@ -1,3 +1,11 @@
+# 0.5.15
+
+* add https://github.com/hesa/foss-licenses
+
+* remove
+
+* ninka scancode-manifestor
+
 # 0.5.11
 
 * new version of scarfer
