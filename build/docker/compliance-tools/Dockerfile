@@ -60,8 +60,8 @@ RUN pip3 install reuse
 # Scancode Manifestor
 #
 #######################################################
-RUN git clone https://github.com/vinland-technology/scancode-manifestor.git
-RUN cd scancode-manifestor && pip3 install .
+#RUN git clone https://github.com/vinland-technology/scancode-manifestor.git
+#RUN cd scancode-manifestor && pip3 install .
 
 
 #######################################################
@@ -69,7 +69,8 @@ RUN cd scancode-manifestor && pip3 install .
 # Ninka
 #
 #######################################################
-RUN apt-get install -y ninka ninka-backend-excel ninka-backend-sqlite
+#RUN apt-cache search ninka
+#RUN apt-get install -y ninka ninka-backend-excel ninka-backend-sqlite
 
 
 
@@ -81,8 +82,9 @@ RUN apt-get install -y ninka ninka-backend-excel ninka-backend-sqlite
 #
 #######################################################
 # get requirements, just in case
-RUN pip3 install scancode-toolkit==31.2.6
-RUN scancode --reindex-licenses
+RUN pip3 install scancode-toolkit
+#==31.2.6
+#RUN scancode --reindex-licenses
 
 
 #######################################################
@@ -141,7 +143,14 @@ RUN git clone https://github.com/vinland-technology/compliance-utils.git
 RUN apt-get install -y python3
 RUN apt-get install -y python3-pip
 RUN git clone https://github.com/hesa/foss-health.git
-RUN cd foss-health && python3.9 -m pip install -r requirements.txt && python3.9 -m pip install --use-pep517 . 
+RUN cd foss-health && python3 -m pip install -r requirements.txt && python3 -m pip install --use-pep517 . 
+
+#######################################################
+#
+# FOSS licenses
+#
+#######################################################
+RUN pip3 install foss-flame
 
 RUN pip3 install spdx
 
@@ -150,4 +159,4 @@ RUN mkdir ${MOUNT_TMP_DIR}
 RUN mkdir ${MOUNT_DIR}
 WORKDIR   ${MOUNT_DIR}
 
-ENV PATH=$HOME/compliance-utils/bin:$HOME/scancode-manifestor:/usr/local/bin:/:/compliance-scripts/copyright-statements:$PATH
+ENV PATH=$HOME/compliance-utils/bin:/usr/local/bin:/:/compliance-scripts/copyright-statements:$PATH
