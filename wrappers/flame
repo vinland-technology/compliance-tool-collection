@@ -15,7 +15,7 @@ PROG=$(basename "$0")
 # compliance tools docker image settings
 #
 DOCKER_IMAGE=sandklef/compliance-tools
-DOCKER_TAG=0.5.15
+DOCKER_TAG=0.5.14
 COMPLIANCE_TOOL_VERSION=${DOCKER_TAG}
 
 DOCKER_ARGS=" ${DOCKER_IMAGE}:${DOCKER_TAG}"
@@ -151,7 +151,7 @@ docker_versions()
 #    echo -n " * Ort:                       " && run_docker ort --version | grep version | cut -d "," -f 2 | cut -d " " -f 3 | sed 's,\.,,g'
 #    echo -n " * Reuse:                     " && run_docker reuse --version | cut -d " " -f 2
     echo -n " * Scancode:                  " && run_docker scancode --version | grep -v -e SPDX -e Output | cut -d " " -f 3
-#    echo -n " * Scancode manifestor:       " && run_docker scancode-manifestor --version | cut -d " " -f 3
+    echo -n " * Scancode manifestor:       " && run_docker scancode-manifestor --version | cut -d " " -f 3
     echo -n " * Scarfer:                   " && run_docker scarfer --version | awk '{print $2}'
     echo -n " * nfhc:                   " && run_docker nfhc --version | awk '{print $2}'
     echo -n " * flame:                   " && run_docker flame --version | awk '{print $2}'
@@ -188,8 +188,7 @@ usage()
     echo "    When invoked under any of the following names:"
 #    echo "        flict, license-detector, ninka, ort"
     echo "        flict, license-detector, ninka"
-    echo "        reuse, scancode"
-#    echo "        reuse, scancode, scancode-manifestor"
+    echo "        reuse, scancode, scancode-manifestor"
     echo "    the corresponding program (run inside) docker is invoked and the arguments"
     echo "    are passed to the program."
     echo ""
@@ -324,7 +323,7 @@ setup_scancode_wrapper()
         verbose "parsing $cnt: $cnt / $len"
         if [ "$1" = "--version" ] || [ "$1" = "-V" ]
         then
-            echo "scanzode-wrapper (Compliance tools collection): $COMPLIANCE_TOOL_VERSION"
+            echo "scancode-wrapper (Compliance tools collection): $COMPLIANCE_TOOL_VERSION"
             exit 0
         elif [ "$1" = "--repo" ]
         then

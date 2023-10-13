@@ -12,6 +12,12 @@ build:
 	@echo check version
 	make check_version
 
+nc-build:
+	@echo Build
+	cd build/docker/compliance-tools && make nc-build
+	@echo check version
+	make check_version
+
 show:
 	cd build/docker/compliance-tools && make docker-show
 

@@ -4,7 +4,7 @@ DEV_DIR=$(dirname ${BASH_SOURCE[0]})
 TOP_DIR=${DEV_DIR}/..
 PATH=${TOP_DIR}/bin:${PATH}
 COMPLIANCE_TOOL=${TOP_DIR}/bin/compliance-tool
-TOOLS=" flict-to-dot yoga yoda reusew lookup-license dependencies.sh nfhc flict license-detector ninka reuse scancode scancode-manifestor spdx-validator"  # createnotices.py 
+TOOLS=" flict-to-dot yoga yoda reusew lookup-license dependencies.sh nfhc flict flame license-detector reuse scancode  spdx-validator"  # createnotices.py   ninka scancode-manifestor
 
 # about
 error()
@@ -129,7 +129,7 @@ compare_mounts
 compare_image_name
 
 echo "Veryfing all tools are present"
-#verify_tools_presence
+verify_tools_presence
 
 echo "Verify tools work, phase I"
 #exec_command createnotices.py -h
@@ -145,7 +145,7 @@ exec_command flict-to-dot --version
 exec_command reuse --version
 exec_command reusew -h
 exec_command scancode --version
-exec_command scancode-manifestor -h
+#exec_command scancode-manifestor -h
 exec_command scarfer --version
 exec_command scarfer spdx-lookup -h
 exec_command spdx-validator -h
@@ -155,11 +155,10 @@ exec_command yoga --version
 
 
 echo "Verify tools work, phase II"
-echo -n "lookup-license: "
 set -o pipefail
+echo -n "lookup-license: "
 echo "bla bla" | ${COMPLIANCE_TOOL} lookup-license 2>/dev/null >/dev/null
 RET=$?
-printf "%-35s" "* check $CMD: "
 if [ $RET -ne 0 ]
 then
     echo FAILED
@@ -168,6 +167,7 @@ fi
 echo OK
 exec_command flict verify -il MIT -ol MIT
 exec_command flict simplify "MIT AND MIT" 
+exec_command flame license "BSD3 and GPLv2+" 
 
 
 echo
