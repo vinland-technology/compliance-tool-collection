@@ -15,7 +15,7 @@ PROG=$(basename "$0")
 # compliance tools docker image settings
 #
 DOCKER_IMAGE=sandklef/compliance-tools
-DOCKER_TAG=0.5.14
+DOCKER_TAG=0.5.15
 COMPLIANCE_TOOL_VERSION=${DOCKER_TAG}
 
 DOCKER_ARGS=" ${DOCKER_IMAGE}:${DOCKER_TAG}"
@@ -147,13 +147,14 @@ docker_versions()
 #    echo -n " * Deltacode:                 " && run_docker deltacode --version | grep "DeltaCode version" | cut -d " " -f 3
     echo -n " * Flict:                     " && run_docker flict --version 
     echo -n " * License detector:          unknown" && echo 
-    echo -n " * Ninka:                     " && run_docker ninka | head -1 | cut -d " " -f 2
+#    echo -n " * Ninka:                     " && run_docker ninka | head -1 | cut -d " " -f 2
 #    echo -n " * Ort:                       " && run_docker ort --version | grep version | cut -d "," -f 2 | cut -d " " -f 3 | sed 's,\.,,g'
 #    echo -n " * Reuse:                     " && run_docker reuse --version | cut -d " " -f 2
     echo -n " * Scancode:                  " && run_docker scancode --version | grep -v -e SPDX -e Output | cut -d " " -f 3
-    echo -n " * Scancode manifestor:       " && run_docker scancode-manifestor --version | cut -d " " -f 3
+#    echo -n " * Scancode manifestor:       " && run_docker scancode-manifestor --version | cut -d " " -f 3
     echo -n " * Scarfer:                   " && run_docker scarfer --version | awk '{print $2}'
     echo -n " * nfhc:                   " && run_docker nfhc --version | awk '{print $2}'
+    echo -n " * flame:                   " && run_docker flame --version | awk '{print $2}'
 }
 
 usage()
@@ -172,9 +173,10 @@ usage()
     echo ""
     echo "    ${PROG} manages a docker image with useful license compliance tools."
     echo "    Included tools:"
+    echo "        flame"
     echo "        flict"
-    echo "        license-detectork"
-    echo "        ninka"
+    echo "        license-detector"
+#    echo "        ninka"
 #    echo "        ort"
     echo "        reuse"
     echo "        scancode"
@@ -186,7 +188,8 @@ usage()
     echo "    When invoked under any of the following names:"
 #    echo "        flict, license-detector, ninka, ort"
     echo "        flict, license-detector, ninka"
-    echo "        reuse, scancode, scancode-manifestor"
+    echo "        reuse, scancode"
+#    echo "        reuse, scancode, scancode-manifestor"
     echo "    the corresponding program (run inside) docker is invoked and the arguments"
     echo "    are passed to the program."
     echo ""
@@ -228,6 +231,9 @@ usage()
     echo "    flict [ARGS]"
     echo "          Starts flict with the arguments [ARGS]"
     echo
+    echo "    flame [ARGS]"
+    echo "          Starts flame with the arguments [ARGS]"
+    echo
     echo "    license-detector [ARGS]"
     echo "          Starts license-detector with the arguments [ARGS]"
     echo
@@ -237,9 +243,9 @@ usage()
     echo "    nfhc [ARGS]"
     echo "          Starts nfhc with the arguments [ARGS]"
     echo
-    echo "    ninka [ARGS]"
-    echo "          Starts ninka with the arguments [ARGS]"
-    echo
+#    echo "    ninka [ARGS]"
+#    echo "          Starts ninka with the arguments [ARGS]"
+#    echo
     echo "    reuse [ARGS]"
     echo "          Starts reuse with the arguments [ARGS]"
     echo
@@ -292,6 +298,7 @@ usage()
     echo "    misc tools         - https://github.com/vinland-technology/compliance-utils"
     echo "    compliance-scripts - https://github.com/armijnhemel/compliance-scripts/tree/master/copyright-statements"
     echo "    flict              - https://github.com/vinland-technology/flict"
+    echo "    flame              - https://github.com/hesa/foss-licenses"
     echo "    license-detector   - http://github.com/go-enry/go-license-detector"
     echo "    ninka              - http://ninka.turingmachine.org/"
 #    echo "    ort              - https://github.com/oss-review-toolkit/ort" 
@@ -317,7 +324,7 @@ setup_scancode_wrapper()
         verbose "parsing $cnt: $cnt / $len"
         if [ "$1" = "--version" ] || [ "$1" = "-V" ]
         then
-            echo "scancode-wrapper (Compliance tools collection): $COMPLIANCE_TOOL_VERSION"
+            echo "scanzode-wrapper (Compliance tools collection): $COMPLIANCE_TOOL_VERSION"
             exit 0
         elif [ "$1" = "--repo" ]
         then
