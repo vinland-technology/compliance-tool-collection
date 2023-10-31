@@ -111,9 +111,9 @@ RUN cd spdx-validator && pip install .
 # Henrik's scarfer (hesa... yeah, that's me)
 #
 #######################################################
-RUN git clone https://github.com/hesa/scarfer.git
-RUN cd scarfer && pip install .
-
+#RUN git clone https://github.com/hesa/scarfer.git
+#RUN cd scarfer && pip install .
+pip install scarfer
 
 
 #######################################################
