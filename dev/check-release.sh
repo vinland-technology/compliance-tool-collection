@@ -1,30 +1,18 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2024 Henrik Sandklef <hesa@sandklef.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 DEV_DIR=$(dirname ${BASH_SOURCE[0]})
 TOP_DIR=${DEV_DIR}/..
 PATH=${TOP_DIR}/bin:${PATH}
 COMPLIANCE_TOOL=${TOP_DIR}/bin/compliance-tool
-TOOLS=" flict-to-dot yoga yoda reusew lookup-license dependencies.sh nfhc flict flame license-detector reuse scancode  spdx-validator"  # createnotices.py   ninka scancode-manifestor
+TOOLS=" flict-to-dot reusew lookup-license dependencies.sh flict flame license-detector reuse scancode  spdx-validator"  
 
-# about
 error()
 {
     echo "$*" 1>&2
-}
-
-compare_version()
-{
-    MAKEFILE_VERSION=$(grep "TAG=" build/docker/compliance-tools/Makefile | cut -d = -f 2)
-    SCRIPT_VERSION=$(grep "DOCKER_TAG=" bin/compliance-tool | cut -d = -f 2)
-    printf "%-35s" "* Compare version: "
-    if [ ${MAKEFILE_VERSION} != ${SCRIPT_VERSION} ]
-    then
-        error "ERROR. Versions differ:"
-        error " * build/docker/compliance-tools/Makefile: ${MAKEFILE_VERSION} "
-        error " * bin/compliance-tool:                    ${SCRIPT_VERSION}   "
-        exit 1
-    fi
-    echo "OK  (${MAKEFILE_VERSION})"
 }
 
 compare_mounts()
@@ -110,6 +98,14 @@ exec_command()
     echo "OK"
 }
 
+version_command()
+{
+    PROG="$1"
+    ARG="$2"
+    VERSION=$(${COMPLIANCE_TOOL} ${PROG} ${ARG} 2>/dev/null)
+    printf "* %-35s: %s\n" "$PROG" "$VERSION"
+}
+
 verify_tools_presence()
 {
     for tool in $(echo $TOOLS | tr ' ' '\n' | sort )
@@ -118,13 +114,25 @@ verify_tools_presence()
     done
 }
 
+create_versions_file()
+{
+    version_command dependencies.sh --version
+    version_command flict --version
+    version_command flict-to-dot --version
+    version_command reuse --version
+    version_command reusew -V
+    ${COMPLIANCE_TOOL} scancode --version | sed 's,^,\* ,g'
+}
+
+create_versions_file
+exit
+
 #
 # MAIN
 #
 
 echo "Verifying meta information"
 
-compare_version
 compare_mounts
 compare_image_name
 
@@ -149,22 +157,11 @@ exec_command scancode --version
 exec_command scarfer --version
 exec_command scarfer spdx-lookup -h
 exec_command spdx-validator -h
-exec_command nfhc --help
-exec_command yoda --version
-exec_command yoga --version
 
 
 echo "Verify tools work, phase II"
-set -o pipefail
-echo -n "lookup-license: "
-echo "bla bla" | ${COMPLIANCE_TOOL} lookup-license 2>/dev/null >/dev/null
-RET=$?
-if [ $RET -ne 0 ]
-then
-    echo FAILED
-    exit 1
-fi
-echo OK
+exec_command lookup-license "mit"
+exec_command flame license "mit"
 exec_command flict verify -il MIT -ol MIT
 exec_command flict simplify "MIT AND MIT" 
 exec_command flame license "BSD3 and GPLv2+" 
