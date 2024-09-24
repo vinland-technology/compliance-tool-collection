@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2024 Henrik Sandklef <hesa@sandklef.com>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 # Compliance Tool Collection
 
 *Misc license compliance tools in one docker image*
@@ -14,13 +20,20 @@ We call the project [Compliance Tool collection](https://github.com/vinland-tech
 
 ## Programs on the image
 
-* [compliance-utils](https://github.com/vinland-technology/compliance-utils) (misc tools)
-* [flict](https://github.com/vinland-technology/flict)
-* [license-detector](http://github.com/go-enry/go-license-detector)
-* [ninka](http://ninka.turingmachine.org/)
-* [ort](https://github.com/oss-review-toolkit/ort)
-* [reuse](https://reuse.software/)
-* [scancode](https://github.com/nexB/scancode-toolkit)
+Compliance tools collection: 0.6
+* Compliance utils: 0.1
+* createnotices.py: unknown
+* elmat: 0.1.14
+* flame: 0.20.5
+* Flict: 1.2.14
+* License detector: unknown
+* lookup-license: 0.1.9
+* Reuse: 4.0.3
+* ScanCode version: 32.2.1
+* ScanCode Output Format version: 3.2.0
+* SPDX License list version: 3.24
+* Scarfer: 0.5.3
+* spdx-validator: unknown
 
 Do you want more tools in the image? Create an [issue](https://github.com/vinland-technology/compliance-tool-collection/issues) at [compliance-tool-collection](https://github.com/vinland-technology/compliance-tool-collection)
 
@@ -74,13 +87,13 @@ When we executed the above, it looked like this:
 ```
 $ compliance-tool --versions
 Compliance tools collections: eb78c50
- * Compliance utils:          ef25ff0
- * Flict:                     c7acb64
- * License detector:          unknown
- * Ninka:                     v1.3.2
- * Ort:                       79a687c
- * Reuse:                     0.12.1    # currently not working
- * Scancode:                  21.3.31
+* Compliance utils:          ef25ff0
+* Flict:                     c7acb64
+* License detector:          unknown
+* Ninka:                     v1.3.2
+* Ort:                       79a687c
+* Reuse:                     0.12.1    # currently not working
+* Scancode:                  21.3.31
 ```
 
 ## Getting some help
