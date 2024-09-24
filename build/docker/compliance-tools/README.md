@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2024 Henrik Sandklef <hesa@sandklef.com>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 # Building the image
 
 Yes, we're old farts and we use ```make```. 
