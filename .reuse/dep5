@@ -1,0 +1,17 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Lookup License
+Upstream-Contact: Henrik Sandklef <hesa@sandklef.com>
+Source: https://github.com/vinland-technology/compliance-tool-collection
+
+Files: .github/**
+Copyright: Henrik Sandklef
+License: CC-BY-4.0
+
+Files: .bumpversion.cfg
+Copyright: 2024 Henrik Sandklef <hesa@sandklef.com>
+License: CC-BY-4.0
+
+Files: .gitignore
+Copyright: 2024 Henrik Sandklef <hesa@sandklef.com>
+License: CC-BY-4.0
+
