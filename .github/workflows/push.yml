@@ -1,0 +1,47 @@
+name: Push test pipeline
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: ['3.9', '3.10']
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+    - name: Build
+      run: python3 setup.py build
+    - name: Install
+      run: python3 setup.py install
+    - name: Test
+      run: |
+        #python3 -m unittest
+        PYTHONPATH=. tests/test-interactive.sh 1
+        PYTHONPATH=. pytest tests/test-lookup.py
+        PYTHONPATH=. pytest tests/test-speed.py
+      shell: bash
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v2
+      if: always() # always run even if the previous step fails
+      with:
+        report_paths: '**/TEST-*.xml'
+    # Install a specific version of python-debian, as there is a pending upstream bug
+    # with the latest version
+    - name: Install additional tooling
+      run: |
+        pip3 install reuse python-debian==0.1.40
+    - name: Reuse check
+      run: |
+        echo reuse lint
