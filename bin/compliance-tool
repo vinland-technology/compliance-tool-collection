@@ -15,8 +15,9 @@ PROG=$(basename "$0")
 # compliance tools docker image settings
 #
 DOCKER_IMAGE=sandklef/compliance-tools
-DOCKER_TAG=0.5.16
-COMPLIANCE_TOOL_VERSION=${DOCKER_TAG}
+
+COMPLIANCE_TOOL_VERSION=0.6
+DOCKER_TAG=${COMPLIANCE_TOOL_VERSION}
 
 DOCKER_ARGS=" ${DOCKER_IMAGE}:${DOCKER_TAG}"
 MOUNT_DIR=/compliance-tools
@@ -112,9 +113,6 @@ set_program_arguments()
 {
     PROGRAM=$1
     case "$PROGRAM" in	
-	"lookup-license")
-	    PROGRAM_ARGUMENTS=" --tmp-dir /tmp/compliance-tool "
-	    ;;
 	*)
 	    PROGRAM_ARGUMENTS=""
 	    ;;
@@ -141,20 +139,17 @@ run_docker()
 
 docker_versions()
 {
-#    echo -n " * Aboutcode:                 " && run_docker about --version | grep "AboutCode-toolkit version" | cut -d " " -f 3
-    echo -n " * Compliance utils:          " && run_docker flict-to-dot --version 
-    echo -n " * createnotices.py:          unknown" && echo
-#    echo -n " * Deltacode:                 " && run_docker deltacode --version | grep "DeltaCode version" | cut -d " " -f 3
-    echo -n " * Flict:                     " && run_docker flict --version 
-    echo -n " * License detector:          unknown" && echo 
-#    echo -n " * Ninka:                     " && run_docker ninka | head -1 | cut -d " " -f 2
-#    echo -n " * Ort:                       " && run_docker ort --version | grep version | cut -d "," -f 2 | cut -d " " -f 3 | sed 's,\.,,g'
-#    echo -n " * Reuse:                     " && run_docker reuse --version | cut -d " " -f 2
-    echo -n " * Scancode:                  " && run_docker scancode --version | grep -v -e SPDX -e Output | cut -d " " -f 3
-#    echo -n " * Scancode manifestor:       " && run_docker scancode-manifestor --version | cut -d " " -f 3
-    echo -n " * Scarfer:                   " && run_docker scarfer --version | awk '{print $2}'
-    echo -n " * nfhc:                   " && run_docker nfhc --version | awk '{print $2}'
-    echo -n " * flame:                   " && run_docker flame --version | awk '{print $2}'
+    echo -n " * Compliance utils: " && run_docker flict-to-dot --version 
+    echo -n " * createnotices.py: unknown" && echo
+    echo -n " * elmat: " && run_docker elmat --version
+    echo -n " * flame: " && run_docker flame --version
+    echo -n " * Flict: " && run_docker flict --version 
+    echo -n " * License detector: unknown" && echo 
+    echo -n " * lookup-license: " && run_docker lookup-license --version
+    echo -n " * Reuse: " && run_docker reuse --version | cut -d " " -f 2
+    run_docker scancode --version  | sed 's,^, \* ,g'
+    echo -n " * Scarfer: " && run_docker scarfer --version | awk '{print $2}'
+    echo -n " * spdx-validator: unknown" && echo
 }
 
 usage()
@@ -324,7 +319,7 @@ setup_scancode_wrapper()
         verbose "parsing $cnt: $cnt / $len"
         if [ "$1" = "--version" ] || [ "$1" = "-V" ]
         then
-            echo "scanzode-wrapper (Compliance tools collection): $COMPLIANCE_TOOL_VERSION"
+            echo "scancode-wrapper (Compliance tools collection): $COMPLIANCE_TOOL_VERSION"
             exit 0
         elif [ "$1" = "--repo" ]
         then
@@ -444,7 +439,7 @@ case $PROG in
                     exit 0
                     ;;
                 "--version"|"-V")
-                    echo "Compliance tools collection: $COMPLIANCE_TOOL_VERSION"
+                    echo "$COMPLIANCE_TOOL_VERSION"
                     exit 0
                     ;;
                 "--versions")
