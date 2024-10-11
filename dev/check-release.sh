@@ -86,10 +86,23 @@ which_command()
 
 exec_command()
 {
+    EXP=$1
+    shift
     CMD="$*"
-    ${COMPLIANCE_TOOL} ${CMD} >/dev/null 2>&1
+    RES=$(${COMPLIANCE_TOOL} ${CMD} 2>&1)
     RET=$?
     printf "%-35s" "* check $CMD: "
+    if [ "$EXP" != "" ]
+    then
+        if [ "$EXP" = "$RES" ]
+        then
+            :
+        else
+            echo "Output mismatch for $CMD"
+            echo "Expected: \"$EXP\""
+            echo "Actual:   \"$RES\""
+        fi
+    fi
     if [ $RET -ne 0 ]
     then
         echo FAILED
@@ -114,19 +127,6 @@ verify_tools_presence()
     done
 }
 
-create_versions_file()
-{
-    version_command dependencies.sh --version
-    version_command flict --version
-    version_command flict-to-dot --version
-    version_command reuse --version
-    version_command reusew -V
-    ${COMPLIANCE_TOOL} scancode --version | sed 's,^,\* ,g'
-}
-
-create_versions_file
-exit
-
 #
 # MAIN
 #
@@ -140,31 +140,23 @@ echo "Veryfing all tools are present"
 verify_tools_presence
 
 echo "Verify tools work, phase I"
-#exec_command createnotices.py -h
-#exec_command deltacode --version
-#exec_command license-detector 
-#exec_command lookup-license
-#exec_command ninka 
-#exec_command about --version
-#exec_command deltacode --version
-exec_command dependencies.sh --version
-exec_command flict --version
-exec_command flict-to-dot --version
-exec_command reuse --version
-exec_command reusew -h
-exec_command scancode --version
-#exec_command scancode-manifestor -h
-exec_command scarfer --version
-exec_command scarfer spdx-lookup -h
-exec_command spdx-validator -h
-
+exec_command "" dependencies.sh --version
+exec_command "" flict --version
+exec_command "" flict-to-dot --version
+exec_command "" reuse --version
+exec_command "" reusew -h
+exec_command "" scancode --version
+exec_command "" scarfer --version
+exec_command "" scarfer spdx-lookup -h
+exec_command "" spdx-validator -h
 
 echo "Verify tools work, phase II"
-exec_command lookup-license "mit"
-exec_command flame license "mit"
-exec_command flict verify -il MIT -ol MIT
-exec_command flict simplify "MIT AND MIT" 
-exec_command flame license "BSD3 and GPLv2+" 
+exec_command "MIT" lookup-license "mit"
+exec_command "MIT" flame license "mit"
+exec_command "Yes" flict -of text verify -il MIT -ol MIT
+exec_command "MIT" flict -of text simplify "MIT AND MIT" 
+exec_command "BSD-3-Clause AND GPL-2.0-or-later" flame -ndu -of text license "BSD3 and GPLv2+" 
+exec_command "" o2h
 
 
 echo
